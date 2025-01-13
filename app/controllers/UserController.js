@@ -1,5 +1,7 @@
 module.exports = {
     get: (req, res) => {
-        res.send("User: Sarah Test");
+        const path = require('path');
+
+        res.sendFile(path.join(__dirname, 'login.html'));
     }
 };
