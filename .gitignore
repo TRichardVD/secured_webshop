@@ -1,3 +1,9 @@
 /app/node_modules/
 /secured_webshop.iml
 /.idea/
+
+*.doc
+*.docx
+
+*.xls
+*.xlsx
