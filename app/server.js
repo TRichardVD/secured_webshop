@@ -12,12 +12,11 @@ const credentials = {
 app.use(express.static('public'));
 app.use(express.static('assets'));
 
-const userRoute = require('./routes/User');
-app.use('/user', userRoute);
+//const userRoute = require('./routes/User');
+//app.use('/user', userRoute);
 
 const loginRoute = require('./routes/Login');
 app.use('/login', loginRoute);
-app.use('/', loginRoute);
 
 // Démarrage du serveur
 https.createServer(credentials, app).listen(443, () => {
