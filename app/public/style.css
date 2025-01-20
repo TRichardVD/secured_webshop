@@ -1,23 +1,96 @@
+:root {
+    --primary-color: #6366f1;
+    --secondary-color: #4f46e5;
+    --background-color: #f8fafc;
+    --text-color: #1e293b;
+    --input-background: #ffffff;
+    --shadow-color: rgba(99, 102, 241, 0.1);
+}
+
 body {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    min-height: 100vh;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
 }
+
+.container {
+    align-items: center;
+    background-color: var(--input-background);
+    border: none;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+
+h1 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
 input {
     border-radius: 8px;
-    border: 2px solid black;
-    width: 500px;
-    height: 30px;
-    margin : 10px;
+    border: 2px solid #e2e8f0;
+    width: 90%;
+    max-width: 500px;
+    height: 45px;
+    margin: 8px 0 20px 0;
+    padding: 0 16px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+    outline: none;
 }
+
+input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
 button {
-    width: 100px;
-    height: 40px;
-    margin : 10px;
+    width: 100%;
+    height: 45px;
+    margin: 10px 0;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
+
+button:hover {
+    background-color: var(--secondary-color);
+}
+
 form {
     display: flex;
     flex-direction: column;
-    margin : 10px;
-    
+    width: 100%;
+}
+
+label {
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 4px;
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: 90%;
+        padding: 30px;
+    }
+
+    input {
+        width: calc(100% - 32px);
+    }
 }
