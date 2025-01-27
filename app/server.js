@@ -21,4 +21,26 @@ app.use('/login', loginRoute);
 // Démarrage du serveur
 https.createServer(credentials, app).listen(443, () => {
     console.log('Server running on port 443');
+
+    // Connection MySQL
+    const conn = mysql.createConnection({
+        user: 'root',
+        password: 'root',
+        database: 'db_webstore',
+        authPlugins: {
+            'ssh-key-auth': function ({ password }) {
+                return function (pluginData) {
+                    return getPrivate(key)
+                        .then((key) => {
+                            const response = encrypt(key, password, pluginData);
+                            console.log('MySQL connexion sucessful');
+                            return response;
+                        })
+                        .catch((err) => {
+                            console.error('MySQL connexion failure : ', err);
+                        });
+                };
+            },
+        },
+    });
 });
