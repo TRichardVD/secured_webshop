@@ -1,6 +1,8 @@
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
+const db = require('./model/database');
+const path = require('path');
 
 const app = express();
 
@@ -10,37 +12,24 @@ const credentials = {
 };
 
 app.use(express.static('public'));
-app.use(express.static('assets'));
 
 //const userRoute = require('./routes/User');
 //app.use('/user', userRoute);
 
-const loginRoute = require('./routes/Login');
-app.use('/login', loginRoute);
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, './vue/login.html'));
+});
+
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, './vue/register.html'));
+});
+
+app.use('/user', require('./routes/User'));
 
 // Démarrage du serveur
 https.createServer(credentials, app).listen(443, () => {
     console.log('Server running on port 443');
 
     // Connection MySQL
-    const conn = mysql.createConnection({
-        user: 'root',
-        password: 'root',
-        database: 'db_webstore',
-        authPlugins: {
-            'ssh-key-auth': function ({ password }) {
-                return function (pluginData) {
-                    return getPrivate(key)
-                        .then((key) => {
-                            const response = encrypt(key, password, pluginData);
-                            console.log('MySQL connexion sucessful');
-                            return response;
-                        })
-                        .catch((err) => {
-                            console.error('MySQL connexion failure : ', err);
-                        });
-                };
-            },
-        },
-    });
+    db.connection();
 });

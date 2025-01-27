@@ -66,6 +66,25 @@ input:focus {
 
 button {
     width: 100%;
+    height: 40px;
+    margin: 10px 0;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    background-color: white;
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: whitesmoke;
+}
+
+button.important {
+    width: 100%;
     height: 45px;
     margin: 10px 0;
     font-family: inherit;
@@ -79,7 +98,7 @@ button {
     transition: background-color 0.3s ease;
 }
 
-button:hover {
+button:hover.important {
     background-color: var(--secondary-color);
 }
 
