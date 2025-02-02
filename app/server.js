@@ -3,6 +3,9 @@ const https = require('https');
 const fs = require('fs');
 const db = require('./model/database');
 const path = require('path');
+const UserController = require('./controllers/UserController');
+const SessionController = require('./controllers/SessionController');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -12,19 +15,35 @@ const credentials = {
 };
 
 app.use(express.static('public'));
+app.use(cookieParser());
 
-//const userRoute = require('./routes/User');
-//app.use('/user', userRoute);
+app.get('/', (req, res) => {
+    if (!!SessionController.isLogin(req.cookies.token)) {
+        return res.sendFile(path.join(__dirname, 'vue/home.html'));
+    }
+    return res.redirect('/login');
+});
 
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, './vue/login.html'));
+    if (!!SessionController.isLogin(req.cookies.token)) {
+        return res.redirect('/user');
+    }
+
+    return res.sendFile(path.join(__dirname, './vue/login.html'));
 });
 
 app.get('/register', (req, res) => {
-    res.sendFile(path.join(__dirname, './vue/register.html'));
+    if (!!SessionController.isLogin(req.cookies.token)) {
+        return;
+    }
+    return res.sendFile(path.join(__dirname, './vue/register.html'));
 });
 
 app.use('/user', require('./routes/User'));
+
+app.use((req, res) => {
+    res.status(404).send('Aucune page trouvée correspondant à votre requête');
+});
 
 // Démarrage du serveur
 https.createServer(credentials, app).listen(443, () => {

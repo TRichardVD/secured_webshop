@@ -3,13 +3,29 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Page d'accueil</title>
+        <link rel="stylesheet" href="css/style.css" />
+        <title>Home Page</title>
     </head>
     <body>
-        <h1>Home</h1>
-        <p>Welcome to the home page</p>
+        <img
+            src="/assets/tube-spinner.svg"
+            alt="Loading Animation"
+            width="100px"
+            style="position: absolute; left: 50%; top: 50%"
+            id="Loading"
+        />
+        <div id="container" style="display: none">
+            <h1>Home</h1>
+            <p>Welcome to the home page</p>
 
-        <p>Vous êtes connecté en tant que <span id="username">ANONYME</span></p>
-        <button type="button" id="DisconnectButton">Se déconnecter</button>
+            <p>
+                Vous êtes connecté en tant que "<span id="username">...</span>"
+            </p>
+            <button type="button" id="AdminAcessButton" display="none">
+                Accéder à la page administrateur
+            </button>
+            <button type="button" id="DisconnectButton">Se déconnecter</button>
+        </div>
     </body>
+    <script src="script/user.js"></script>
 </html>

@@ -18,7 +18,7 @@ body {
     color: var(--text-color);
 }
 
-.container {
+#container {
     align-items: center;
     background-color: var(--input-background);
     border: none;
@@ -36,6 +36,7 @@ h1 {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    text-decoration: underline;
 }
 
 label {

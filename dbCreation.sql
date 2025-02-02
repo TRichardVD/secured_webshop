@@ -3,8 +3,19 @@ USE `db_webstore`;
 
 CREATE TABLE `t_user` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(45) NOT NULL,
-  `password` VARCHAR(45) NOT NULL,
-  `isAdmin` BOOLEAN NOT NULL,
-  PRIMARY KEY (`id`));
+  `username` VARCHAR(45) NOT NULL UNIQUE,
+  `passwordHashed` VARCHAR(255) NOT NULL,
+  `salt` VARCHAR(64) NOT NULL,
+  `isAdmin` BOOLEAN NOT NULL DEFAULT '0',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+);
 
+CREATE TABLE `t_session` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `fkUser` INT NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `expires_at` TIMESTAMP NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`fkUser`) REFERENCES `t_user` (`id`) ON DELETE CASCADE
+);

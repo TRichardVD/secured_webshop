@@ -4,12 +4,12 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Login ETML</title>
-        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="css/style.css" />
     </head>
     <body>
-        <div class="container">
+        <div id="container">
             <h1>REGISTER</h1>
-            <form action="/user/create" method="post">
+            <form action="/user/api/create" method="post">
                 <label for="usernameLogin">Username</label>
                 <input
                     type="text"
@@ -17,7 +17,7 @@
                     id="usernameLogin"
                     required
                     maxlength="20"
-                    minlength="5"
+                    minlength="3"
                 />
 
                 <label for="pswLogin">Password</label>

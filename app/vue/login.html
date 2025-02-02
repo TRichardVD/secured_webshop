@@ -4,16 +4,16 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Login ETML</title>
-        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="css/style.css" />
     </head>
     <body>
-        <div class="container">
+        <div id="container">
             <h1>LOGIN</h1>
-            <form action="/" method="get">
+            <form action="/user/api/login" method="post">
                 <label for="usernameLogin">Username</label>
                 <input
                     type="text"
-                    name="usernameLogin"
+                    name="username"
                     id="usernameLogin"
                     required
                     maxlength="20"
@@ -22,7 +22,7 @@
                 <label for="pswLogin">Password</label>
                 <input
                     type="password"
-                    name="passwordLogin"
+                    name="password"
                     id="pswLogin"
                     maxlength="35"
                     required
@@ -35,4 +35,10 @@
             </button>
         </div>
     </body>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+
+        document.getElementById('usernameLogin').value =
+            urlParams.get('username');
+    </script>
 </html>
