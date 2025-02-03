@@ -1,20 +1,20 @@
 const generateSalt = function (length) {
-    let result = '';
+  let result = "";
 
-    const characters =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const charactersLength = characters.length;
 
-    let counter = 0;
+  let counter = 0;
 
-    while (counter < length) {
-        result += characters.charAt(
-            Math.floor(Math.random() * charactersLength)
-        );
-        counter += 1;
-    }
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
 
-    return result;
+  return result;
 };
+
+//TODO: Ajout du fonction permettant le hashage
 
 module.exports = { generateSalt };

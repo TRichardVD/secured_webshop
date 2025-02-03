@@ -37,3 +37,22 @@ fetch("/user/api/getData", {
     alert("Une erreur est survenue");
     console.error(err);
   });
+
+// Deconnection
+document.getElementById("DisconnectButton").addEventListener("click", () => {
+  if (confirm("Êtes-vous sûr de vouloir vous déconnecter ?")) {
+    fetch("/user/api/delete", {
+      method: "POST",
+      headers: {
+        token,
+      },
+    })
+      .then((result) => {
+        window.location.href = "/login";
+      })
+      .catch((err) => {
+        console.error("Une erreur s'est produite durant la déconnection", err);
+      });
+  }
+  return undefined;
+});

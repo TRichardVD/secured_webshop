@@ -7,8 +7,8 @@ const path = require("path");
 
 router.use(express.urlencoded({ extended: true }));
 
-router.get("/", (req, res) => {
-  if (!!SessionController.isLogin(req.cookies.token)) {
+router.get("/", async (req, res) => {
+  if (await SessionController.isLogin(req.cookies.token)) {
     // Retouner la page de l'utilisateur
     return res.sendFile(path.join(__dirname, "../vue/home.html"));
   }
@@ -44,7 +44,7 @@ router.get("/api/getData", async (req, res) => {
     return res.status(400).json({ message: "no token" });
   }
 
-  const TokenData = SessionController.isLogin(token);
+  const TokenData = await SessionController.isLogin(token);
   if (!TokenData) {
     return res.status(401).json({ message: "no valid access" });
   }
@@ -59,6 +59,17 @@ router.get("/api/getData", async (req, res) => {
   } catch {
     return res.status(500).json({ message: "error with data got" });
   }
+});
+
+router.post("/api/delete", (req, res) => {
+  const token = req.headers.token;
+  console.log("token : ", token);
+  if (token) {
+    if (!!SessionController.deleteSession(token)) {
+      return res.status(200).clearCookie("token");
+    }
+  }
+  return res.status(400);
 });
 
 module.exports = router;

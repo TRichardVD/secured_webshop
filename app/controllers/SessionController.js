@@ -103,9 +103,9 @@ const createSession = async function (username, password) {
   }
 };
 
-const isLogin = function (token) {
+const isLogin = async function (token) {
   if (!token) {
-    return false;
+    return undefined;
   }
 
   let decoded = undefined;
@@ -120,20 +120,60 @@ const isLogin = function (token) {
     return undefined;
   }
 
-  const resultQuery = db.pool.query(
-    `SELECT id FROM ${db.tableSession} WHERE id = ? AND expires_at = ? AND expires_at > ? AND created_at = ? AND fkUser = ?`,
-    [decoded.jti, decoded.exp, Date.now(), decoded.iat, decoded.sub]
-  );
+  try {
+    // Vérifie si le token correspond à une session active dans la base de données
+    const result = await db.pool.query(
+      `SELECT id FROM ${db.tableSession} WHERE id = ?`,
+      [decoded.jti]
+    );
 
-  if (!resultQuery || resultQuery.length > 1) {
+    if (result.length === 1) {
+      // Si on trouve une entrée valide
+      return decoded; // Retourne l'objet token décodé
+    }
+  } catch (err) {
+    console.error("Erreur dans la verification du token dans la db : " + err);
+    return undefined; // Retourne undefined en cas d'erreur dans la DB
+  }
+  return undefined;
+};
+
+const deleteSession = async function (token) {
+  // TODO : Fonction permettant de supprimer une session afin de se deconnecter proprement
+
+  if (!token) {
     return undefined;
   }
 
-  return decoded;
+  const decoded = await isLogin(token);
+  if (decoded) {
+    if (
+      !(await db.pool
+        .query(`DELETE FROM ${db.tableSession} WHERE id=?`, [decoded.sub])
+        .then((result) => {
+          console.log(`Le token avec l'id ${decoded.sub} a été supprimé`);
+          return true;
+        })
+        .catch((err) => {
+          console.error(
+            `Une erreur s'est produite durant la suppression du token avec l'id ${decoded.id} : ` +
+              err
+          );
+          return false;
+        }))
+    ) {
+      return undefined;
+    }
+
+    if (
+      !(await db.pool
+        .query(`SELECT * FROM ${db.tableSession} WHERE id=?`, [decoded.sub])
+        .then((result) => result.length === 0))
+    ) {
+      return true;
+    }
+  }
+  return false;
 };
 
-const deleteSession = async function (idToken) {
-  // TODO : Fonction permettant de supprimer une session afin de se deconnecter proprement
-};
-
-module.exports = { createSession, isLogin };
+module.exports = { createSession, isLogin, deleteSession };
