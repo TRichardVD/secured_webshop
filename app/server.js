@@ -32,7 +32,6 @@ app.get('/login', async (req, res) => {
     try {
         await SessionController.isLogin(req.cookies.token);
     } catch (err) {
-        console.log('ok ici ca passe');
         console.log(err);
         return res.sendFile(path.join(__dirname, './vue/login.html'));
     }
@@ -45,10 +44,9 @@ app.get('/register', async (req, res) => {
         await SessionController.isLogin(req.cookies.token);
     } catch (err) {
         console.log(err);
-        return res.redirect('/register');
+        return res.sendFile(path.join(__dirname, 'vue/register.html'));
     }
-
-    return res.sendFile(path.join(__dirname, 'vue/home.html'));
+    return res.redirect('/user');
 });
 
 app.use('/user', require('./routes/User'));
