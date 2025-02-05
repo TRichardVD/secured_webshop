@@ -20,28 +20,17 @@ const createToken = function (data) {
     });
 };
 
-const decodToken = function (token) {
+const verifyToken = function (token) {
     return new Promise((resolve, reject) => {
-        jwt.decode(token, (err, decoded) => {
+        jwt.verify(token, privateKey, (err, decoded) => {
             if (err) {
                 reject(err);
             } else {
+                console.log(decoded);
                 resolve(decoded);
             }
         });
     });
 };
 
-const verifyToken = function (token) {
-    return new Promise((resolve, reject) => {
-        jwt.verify(token, privateKey, (err, result) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(result);
-            }
-        });
-    });
-};
-
-module.exports = { createToken, verifyToken, decodToken };
+module.exports = { createToken, verifyToken };

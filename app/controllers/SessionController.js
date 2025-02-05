@@ -9,7 +9,6 @@ dotenv.config();
 const createSession = async function (username, password) {
     // Vérification de paramètre de connection et récupération des données manquantes
     const allData = await UserController.getData({ username });
-
     if (!allData) {
         return;
     }
@@ -30,20 +29,18 @@ const createSession = async function (username, password) {
         sub: data.id,
         userCreation: data.created_at,
         admin: data.isAdmin === 1,
-        iat: Date.UTC(2025, 1, 3, 15, 0, 0),
-        exp: Date.UTC(2025, 1, 3, 15, 0, 0) + 60 * 60 * 1000,
+        iat: Math.floor(new Date() / 1000),
+        exp: Math.floor(new Date() / 1000) + 60 * 60,
     };
-
     let sessionCreated = false;
-    const iatStr = new Date(dataToken.iat)
-        .toJSON()
+    const iatStr = new Date(dataToken.iat * 1000)
+        .toISOString()
         .slice(0, 19)
         .replace('T', ' ');
-    const expStr = new Date(dataToken.exp)
-        .toJSON()
+    const expStr = new Date(dataToken.exp * 1000)
+        .toISOString()
         .slice(0, 19)
         .replace('T', ' ');
-
     try {
         // Ajout à la db
         await db.pool.query(
@@ -54,19 +51,21 @@ const createSession = async function (username, password) {
 
         // Récupération de l'id du token créé
         const Token = await db.pool.query(
-            `SELECT id FROM ${db.tableSession} WHERE fkUser = ? AND created_at = ? AND expires_at = ? LIMIT 1`,
+            `SELECT id FROM ${db.tableSession} WHERE fkUser = ? AND created_at = ? AND expires_at = ? ORDER BY created_at DESC LIMIT 1`,
             [data.id, iatStr, expStr]
         );
 
-        if (!Token || !Token[0]) {
+        if (!Token) {
             throw new Error("Impossible de récupérer l'ID de session");
         }
-        const idToken = Token[0].id;
+        const idToken = Token[0][0].id;
 
         // Génération du token
-        const token = await jwt.createToken({ ...dataToken, jti: idToken });
+        dataToken.jti = idToken;
 
-        console.log('Voici le nouveau token ', token);
+        const token = await jwt.createToken(dataToken);
+
+        console.log('Nouveau token ', token);
         return token;
     } catch (err) {
         console.error('Erreur lors de la création de session : ', err);
@@ -97,15 +96,15 @@ const isLogin = function (token) {
             return;
         }
 
+        let decoded = undefined;
+
         try {
-            await jwt.verifyToken(token);
+            decoded = await jwt.verifyToken(token);
         } catch (error) {
             console.error('Erreur de vérification du token : ', error.message);
             reject('Token Invalide');
             return;
         }
-
-        const decoded = jwt.decodToken(token);
 
         try {
             // Vérifie si le token correspond à une session active dans la base de données
@@ -114,9 +113,12 @@ const isLogin = function (token) {
                 [decoded.jti]
             );
 
-            if (result.length === 1) {
+            if (result[0].length === 1) {
                 // Si on trouve une entrée valide
-                resolve(await jwt.decodToken(token)); // Retourne l'objet token décodé
+                resolve(decoded); // Retourne l'objet token décodé
+                return;
+            } else {
+                reject('Token non trouvé dans la base de données');
                 return;
             }
         } catch (err) {
@@ -126,37 +128,32 @@ const isLogin = function (token) {
             reject('Erreur base de données'); // Retourne undefined en cas d'erreur dans la DB
             return;
         }
-        reject('Token refusé');
-        return;
     });
 };
 
-const deleteSession = async function (token) {
+const deleteSession = function (token) {
     // TODO : Fonction permettant de supprimer une session afin de se deconnecter proprement
     return new Promise(async (resolve, reject) => {
         // Vérification du login
+        let decoded = undefined;
         try {
-            await isLogin(token);
-        } catch (err) {
-            reject(err);
-            return;
-        }
+            decoded = await isLogin(token);
 
-        db.pool
-            .query(`DELETE FROM ${db.tableSession} WHERE id=?`, [decoded.sub])
-            .then((result) => {
-                console.log(`Token ${decoded.sub} a été supprimé`);
-                resolve(`Le token avec l'id ${decoded.sub} a été supprimé`);
-                return;
-            })
-            .catch((err) => {
-                console.error(
-                    `Une erreur s'est produite durant la suppression du token avec l'id ${decoded.id} : ` +
-                        err
-                );
-                reject("Une erreur s'est produite durant la suppression");
-                return;
-            });
+            const resultQuery = await db.pool.query(
+                `DELETE FROM ${db.tableSession} WHERE id=?`,
+                [decoded.jti]
+            );
+            if (resultQuery[0].affectedRows !== 1) {
+                throw new Error('Erreur lors de la suppression de la session');
+            }
+            resolve('Session supprimée');
+        } catch (error) {
+            console.error(
+                'Erreur lors de la suppression de la session : ',
+                error
+            );
+            reject('Erreur lors de la suppression de la session');
+        }
     });
 };
 

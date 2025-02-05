@@ -17,30 +17,34 @@ const credentials = {
 app.use(express.static('public'));
 app.use(cookieParser());
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     try {
-        SessionController.isLogin(req.cookies.token);
-    } catch {
+        await SessionController.isLogin(req.cookies.token);
+    } catch (err) {
+        console.log(err);
         return res.redirect('/login');
     }
 
     return res.sendFile(path.join(__dirname, 'vue/home.html'));
 });
 
-app.get('/login', (req, res) => {
+app.get('/login', async (req, res) => {
     try {
-        SessionController.isLogin(req.cookies.token);
-    } catch {
-        return res.redirect('/login');
+        await SessionController.isLogin(req.cookies.token);
+    } catch (err) {
+        console.log('ok ici ca passe');
+        console.log(err);
+        return res.sendFile(path.join(__dirname, './vue/login.html'));
     }
 
-    return res.sendFile(path.join(__dirname, 'vue/home.html'));
+    return res.redirect('/user');
 });
 
-app.get('/register', (req, res) => {
+app.get('/register', async (req, res) => {
     try {
-        SessionController.isLogin(req.cookies.token);
-    } catch {
+        await SessionController.isLogin(req.cookies.token);
+    } catch (err) {
+        console.log(err);
         return res.redirect('/register');
     }
 

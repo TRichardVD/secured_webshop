@@ -27,7 +27,6 @@ router.post('/api/login', async function (req, res) {
     try {
         const token = await SessionController.createSession(username, password);
 
-        console.log('hello', token);
         if (!token) {
             return res.redirect(`/login?username=${username}`);
         }
@@ -52,26 +51,28 @@ router.get('/api/getData', async (req, res) => {
 
     try {
         const TokenData = await SessionController.isLogin(token);
-
         const result = await UserController.getData({ id: TokenData.sub });
 
         if (!result) {
             return res.status(404).json({ message: 'no data found' });
+        } else {
+            return res.status(200).json(result[0]);
         }
     } catch (err) {
         return res.status(401).json({ message: 'no valid access' });
     }
 });
 
-router.post('/api/delete', (req, res) => {
+router.post('/api/deconnection', async (req, res) => {
     const token = req.headers.token;
-    console.log('token : ', token);
-    if (token) {
-        if (!!SessionController.deleteSession(token)) {
-            return res.status(200).clearCookie('token');
-        }
+
+    try {
+        const message = await SessionController.deleteSession(token);
+        res.status(200).json({ message });
+        console.log('Session supprimée');
+    } catch (err) {
+        res.status(400).json({ message: err });
     }
-    return res.status(400);
 });
 
 module.exports = router;
