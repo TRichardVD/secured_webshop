@@ -26,7 +26,6 @@ const verifyToken = function (token) {
             if (err) {
                 reject(err);
             } else {
-                console.log(decoded);
                 resolve(decoded);
             }
         });

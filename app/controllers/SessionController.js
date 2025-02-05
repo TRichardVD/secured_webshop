@@ -3,6 +3,7 @@ const db = require('../model/database');
 const dotenv = require('dotenv');
 const helper = require('../helper/helper');
 const UserController = require('./UserController');
+const hashage = require('../helper/hashage');
 
 dotenv.config();
 
@@ -21,6 +22,12 @@ const createSession = async function (username, password) {
     }
 
     if (!data) {
+        return;
+    }
+
+    // Vérification du mot de passe
+    if (!hashage.compareHash(data.salt, password, data.passwordHashed)) {
+        console.error('Mot de passe incorrect');
         return;
     }
 

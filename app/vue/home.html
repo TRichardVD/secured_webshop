@@ -1,29 +1,36 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/style.css" />
-    <title>Home Page</title>
-  </head>
-  <body>
-    <img
-      src="/assets/tube-spinner.svg"
-      alt="Loading Animation"
-      width="100px"
-      style="position: absolute; left: 50%; top: 50%"
-      id="Loading"
-    />
-    <div id="container" style="display: none">
-      <h1>Home</h1>
-      <p>Welcome to the home page</p>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="css/style.css" />
+        <link
+            rel="shortcut icon"
+            href="/assets/lock_open_24dp_634FA2_FILL0_wght400_GRAD0_opsz24.svg"
+            type="image/x-icon"
+        />
+        <title>Home Page</title>
+    </head>
+    <body>
+        <img
+            src="/assets/tube-spinner.svg"
+            alt="Loading Animation"
+            width="100px"
+            style="position: absolute; left: 50%; top: 50%"
+            id="Loading"
+        />
+        <div id="container" style="display: none">
+            <h1>Home</h1>
+            <p>Welcome to the home page</p>
 
-      <p>Vous êtes connecté en tant que "<span id="username">...</span>"</p>
-      <button type="button" id="AdminAcessButton" style="display: none">
-        Accéder à la page administrateur
-      </button>
-      <button type="button" id="DisconnectButton">Se déconnecter</button>
-    </div>
-  </body>
-  <script src="script/user.js"></script>
+            <p>
+                Vous êtes connecté en tant que "<span id="username">...</span>"
+            </p>
+            <button type="button" id="AdminAcessButton" style="display: none">
+                Accéder à la page administrateur
+            </button>
+            <button type="button" id="DisconnectButton">Se déconnecter</button>
+        </div>
+    </body>
+    <script src="script/user.js"></script>
 </html>

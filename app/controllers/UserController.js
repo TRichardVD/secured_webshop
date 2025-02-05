@@ -2,17 +2,18 @@ const jwt = require('jsonwebtoken');
 const db = require('../model/database');
 const dotenv = require('dotenv');
 const helper = require('../helper/helper');
+const hashage = require('../helper/hashage');
 
 dotenv.config();
 
 const createUser = function ({ username, password }) {
     const salt = helper.generateSalt(10);
-
+    const pswHashed = hashage.calculateHash(salt, password);
     // TODO: Ajout de vérification que le mot de passe respecte les normes
     db.pool
         .query(
             `INSERT INTO ${db.tableUser} (username, passwordHashed, salt) VALUES (?, ?, ?)`,
-            [username, password, salt]
+            [username, pswHashed, salt]
         )
         .then((result) => {
             console.log('User created : ', result);
@@ -21,7 +22,7 @@ const createUser = function ({ username, password }) {
             console.log('Error creating user: ', err);
         });
 
-    const data = getData({ username, passwordHashed: password, salt });
+    const data = getData({ username, passwordHashed: pswHashed, salt });
     if (!data) {
         console.error('Erreur : Utilisateur créé introuvable');
         return undefined;
