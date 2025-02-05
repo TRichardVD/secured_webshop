@@ -125,3 +125,55 @@ label {
         width: calc(100% - 32px);
     }
 }
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 20px 0;
+    font-size: 1rem;
+    text-align: left;
+}
+
+table th,
+table td {
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+table th {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+table tr {
+    transition: background-color 1s ease;
+}
+
+table tr:hover {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+textarea {
+    width: 100%;
+    max-width: 500px;
+    height: 100px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+    outline: none;
+}
+
+textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}

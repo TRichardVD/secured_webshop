@@ -75,4 +75,57 @@ router.post('/api/deconnection', async (req, res) => {
     }
 });
 
+router.get('/:id', async (req, res) => {
+    try {
+        await SessionController.isLogin(req.cookies.token);
+    } catch {
+        return res.redirect('/login');
+    }
+    return res.sendFile(path.join(__dirname, '../vue/user.html'));
+});
+
+router.get('/api/:id', async (req, res) => {
+    let decoded = undefined;
+    const token = req.headers.token;
+    const id = Number(req.params.id);
+
+    if (!token) {
+        return res.status(400).send('Aucun token fourni');
+    }
+
+    if (!id) {
+        return res.status(400).send("L'id doit être un nombre");
+    }
+
+    try {
+        decoded = await SessionController.isLogin(token);
+    } catch (err) {
+        console.log(err);
+        return res.redirect('/login');
+    }
+
+    if (decoded.isAdmin === 0 && decoded.sub !== id) {
+        return res.status(402).send('Accès refusé');
+    }
+    try {
+        const result = await UserController.getData({ id: id });
+
+        if (!result) {
+            return res.status(404).send('Aucune donnée trouvée');
+        }
+
+        return res.status(200).json({
+            message: `Données de l'utilisateur avec l'id ${id} ont été récupérées avec succès`,
+            data: result[0],
+        });
+    } catch (err) {
+        console.log(err);
+        return res
+            .status(404)
+            .send(
+                "Problème lors de la récupération des données de l'utilisateur"
+            );
+    }
+});
+
 module.exports = router;

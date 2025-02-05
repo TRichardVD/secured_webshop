@@ -24,6 +24,8 @@ function eraseCookie(name) {
 
 // ------[ MAIN ]------
 
+let userInformations = undefined;
+
 const token = getCookie('token');
 fetch('/user/api/getData', {
     method: 'GET',
@@ -34,6 +36,8 @@ fetch('/user/api/getData', {
     .then((response) => response.json())
     .then((response) => {
         console.log(response);
+        userInformations = response;
+
         document.getElementById('username').textContent = response.username;
         document.getElementById('container').style = 'display: block';
         document.getElementById('Loading').style = 'display: none';
@@ -69,4 +73,9 @@ document.getElementById('DisconnectButton').addEventListener('click', () => {
             });
     }
     return undefined;
+});
+
+// Redirection vers la page du profil
+document.getElementById('AccessMyProfil').addEventListener('click', () => {
+    window.location.href = `/user/${userInformations.id}`;
 });
