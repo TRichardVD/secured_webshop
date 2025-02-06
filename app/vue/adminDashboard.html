@@ -1,36 +1,44 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Dashboard Administrateur</title>
-        <link rel="stylesheet" href="css/style.css" />
-        <link
-            rel="shortcut icon"
-            href="assets/key_24dp_634FA2_FILL0_wght400_GRAD0_opsz24.svg"
-            type="image/x-icon"
-        />
-    </head>
-    <body>
-        <h1>Dashboard Administrateur</h1>
-        <table>
-            <caption>
-                Liste des utiliateurs
-            </caption>
-            <thead>
-                <tr>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
-        <button type="button" id="DisconnectButton">Se déconnecter</button>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Administrateur</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="shortcut icon"
+      href="assets/key_24dp_634FA2_FILL0_wght400_GRAD0_opsz24.svg"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+    <h1>Dashboard Administrateur</h1>
+    <!-- Barre de recherche -->
+    <input
+      type="search"
+      name="search"
+      id="search"
+      placeholder="Rechercher un utiliateur"
+    />
+    <button type="button" id="searchButton">Rechercher</button>
+
+    <table>
+      <caption>
+        Liste des utiliateurs
+      </caption>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <!-- Display Users HERE -->
+        </tr>
+      </tbody>
+    </table>
+    <button type="button" id="DisconnectButton">Se déconnecter</button>
+  </body>
+  <script src="/script/admin.js"></script>
 </html>
