@@ -8,8 +8,8 @@ const settings = {
   database: "db_webstore",
 };
 
-const tableUser = "t_user";
-const tableSession = "t_session";
+const tableUser = "t_users";
+const tableSession = "t_sessions";
 
 const pool = mysql.createPool(settings);
 

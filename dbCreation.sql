@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS `db_webstore`;
 USE `db_webstore`;
 
-CREATE TABLE `t_user` (
+CREATE TABLE `t_users` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(45) NOT NULL UNIQUE,
   `passwordHashed` VARCHAR(255) NOT NULL,
@@ -11,11 +11,11 @@ CREATE TABLE `t_user` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `t_session` (
+CREATE TABLE `t_sessions` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `fkUser` INT NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `expires_at` TIMESTAMP NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`fkUser`) REFERENCES `t_user` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`fkUser`) REFERENCES `t_users` (`id`) ON DELETE CASCADE
 );
