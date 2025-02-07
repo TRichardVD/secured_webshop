@@ -1,5 +1,8 @@
 // Importation de la fonction scryptSync et timingSafeEqual du module crypto
-const { scryptSync, timingSafeEqual } = require('node:crypto');
+const { scryptSync, timingSafeEqual } = require("node:crypto");
+const dotenv = require("dotenv");
+dotenv.config();
+const poivre = process.env.POIVRE;
 
 /**
  * Fonction pour calculer le hachage d'une donnée avec un sel.
@@ -11,11 +14,12 @@ const { scryptSync, timingSafeEqual } = require('node:crypto');
  * @returns {string} Le hachage sous forme hexadécimale.
  */
 const calculateHash = (salt, data) => {
+    // TODO : retourner une promesse
     // Définition de la longueur du hachage en octets
     const keyLength = 64;
 
     // Calcul du hachage en utilisant scrypt
-    return scryptSync(data, salt, keyLength).toString('hex');
+    return scryptSync(data, poivre + salt, keyLength).toString("hex");
 };
 
 /**
@@ -28,11 +32,13 @@ const calculateHash = (salt, data) => {
  * @returns {boolean} True si les hachages sont identiques, false sinon.
  */
 const compareHash = (salt, data, hash) => {
+    // TODO : retourner une promesse
+
     // Conversion du hachage existant en buffer
-    const hashedBuffer = Buffer.from(hash, 'hex');
+    const hashedBuffer = Buffer.from(hash, "hex");
 
     // Calcul du hachage actuel pour comparaison
-    const currentBuffer = Buffer.from(calculateHash(salt, data), 'hex');
+    const currentBuffer = Buffer.from(calculateHash(salt, data), "hex");
 
     // Comparaison sécurisée des hachages
     return timingSafeEqual(hashedBuffer, currentBuffer);
