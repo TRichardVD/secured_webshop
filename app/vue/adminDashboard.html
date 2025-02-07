@@ -12,33 +12,36 @@
     />
   </head>
   <body>
-    <h1>Dashboard Administrateur</h1>
-    <!-- Barre de recherche -->
-    <input
-      type="search"
-      name="search"
-      id="search"
-      placeholder="Rechercher un utiliateur"
-    />
-    <button type="button" id="searchButton">Rechercher</button>
+    <div class="content">
+      <h1>Dashboard Administrateur</h1>
+      <!-- Barre de recherche -->
+      <div class="searchbar" style="display: flex; flex-direction: row">
+        <input
+          type="search"
+          name="search"
+          id="search"
+          placeholder="Rechercher un utiliateur"
+        />
+        <button type="button" id="searchButton" style="width: min-content">
+          Rechercher
+        </button>
+      </div>
 
-    <table>
-      <caption>
-        Liste des utiliateurs
-      </caption>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Username</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
+      <table>
+        <caption>
+          Liste des utilisateurs
+        </caption>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+          </tr>
+        </thead>
+        <tbody id="users">
           <!-- Display Users HERE -->
-        </tr>
-      </tbody>
-    </table>
-    <button type="button" id="DisconnectButton">Se déconnecter</button>
+        </tbody>
+      </table>
+    </div>
   </body>
   <script src="/script/admin.js"></script>
 </html>
