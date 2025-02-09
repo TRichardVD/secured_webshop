@@ -65,9 +65,11 @@ Accédez ensuite à l'application via [https://localhost/](https://localhost/).
 - [x] Authentification via JWT et compte utilisateur.
 - [x] Gestion des rôles (utilisateur/admin).
 - [x] Page d'administration
-- [ ] Hashage avec bcrypt avec salage et poivrage (actuellement uniquement avec `Scrypt`).
+- [x] Correction d'un bug liés à l'envoie de uniquement des informations utiles avec getdata
 - [ ] Protection contre les injections SQL sans ORM.
+- [ ] Hashage avec bcrypt avec salage et poivrage (actuellement uniquement avec `Scrypt`).
 - [ ] Authentification via une API tierce (OAuth 2.0, MSAL)
 - [ ] Ajout de logs détaillés pour faciliter le débogage.
 - [ ] Documentation complète avec JSDoc.
 - [ ] Optimisation et refactorisation des routes backend.
+- [ ] Ajout sur la page de login l'affichage de message d'erreur ou des messages de succès d'une opération

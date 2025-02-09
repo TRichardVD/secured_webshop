@@ -9,17 +9,7 @@ dotenv.config();
 
 const createSession = async function (username, password) {
   // Vérification de paramètre de connection et récupération des données manquantes
-  const allData = await UserController.getData({ username });
-  if (!allData) {
-    return;
-  }
-
-  let data = undefined;
-  try {
-    data = allData[0];
-  } catch (error) {
-    return;
-  }
+  const data = await UserController.getData({ username }, null, null, false);
 
   if (!data) {
     return;
@@ -93,7 +83,7 @@ const createSession = async function (username, password) {
   }
 };
 
-const isLogin = function (token) {
+const isLogin = function (token, secure = true) {
   return new Promise(async (resolve, reject) => {
     if (!token) {
       reject("Aucun token");
@@ -122,12 +112,15 @@ const isLogin = function (token) {
         // Si on trouve une entrée valide
 
         // Récupération des données de l'utilisateur
-        const user = (
-          await UserController.getData({
+        const user = await UserController.getData(
+          {
             id: result[0][0].fkUser,
-          })
-        )[0];
-
+          },
+          null,
+          null,
+          secure
+        );
+        console.log("User : ", user);
         resolve({ ...user, tokenId: decoded.jti }); // Retourne l'objet token décodé
         return;
       } else {
