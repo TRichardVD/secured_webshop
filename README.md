@@ -66,9 +66,9 @@ Accédez ensuite à l'application via [https://localhost/](https://localhost/).
 - [x] Gestion des rôles (utilisateur/admin).
 - [x] Page d'administration
 - [x] Protection contre les injections SQL sans ORM.
-- [ ] Hashage avec bcrypt avec salage et poivrage (actuellement uniquement avec `Scrypt`).
+- [x] Documentation complète avec JSDoc.
 - [ ] Authentification via une API tierce (OAuth 2.0, MSAL)
-- [ ] Ajout de logs détaillés pour faciliter le débogage.
-- [ ] Documentation complète avec JSDoc.
-- [ ] Optimisation et refactorisation des routes backend.
 - [ ] Ajout sur la page de login l'affichage de message d'erreur ou des messages de succès d'une opération
+- [ ] Hashage avec bcrypt avec salage et poivrage (actuellement uniquement avec `Scrypt`).
+- [ ] Ajout de logs détaillés pour faciliter le débogage.
+- [ ] Optimisation et refactorisation des routes backend.

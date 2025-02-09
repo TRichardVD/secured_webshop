@@ -1,5 +1,15 @@
+/**
+ * Valide et nettoie une entrée utilisateur pour éviter les attaques XSS et SQLi.
+ * Cette fonction vérifie la conformité de l'entrée à certaines règles de sécurité,
+ * échappe les caractères dangereux et retourne la chaîne sécurisée si valide.
+ *
+ * @param {*} input - Entrée utilisateur à valider.
+ * @param {number} maxLength - Longueur maximale autorisée pour l'entrée.
+ * @returns {Promise<string>} - Promesse résolue avec l'entrée nettoyée ou rejetée avec une erreur.
+ */
 const secureInputValidation = function (input, maxLength) {
   return new Promise((resolve, reject) => {
+    // Vérification que l'entrée n'est pas nulle ou indéfinie
     if (input === undefined || input === null) {
       reject("Entrée invalide : valeur nulle");
       return;
@@ -18,6 +28,7 @@ const secureInputValidation = function (input, maxLength) {
     const sqlMatches = inputStr.match(sqlPattern) || [];
     const threats = [...new Set([...xssMatches, ...sqlMatches])];
 
+    // Rejet si des menaces XSS ou SQLi sont détectées
     if (threats.length > 0) {
       reject(`Menace détectée : ${threats.map((t) => `"${t}"`).join(", ")}`);
       return;
@@ -48,8 +59,10 @@ const secureInputValidation = function (input, maxLength) {
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#x27;");
 
+    // Résolution avec l'entrée nettoyée
     resolve(sanitized);
   });
 };
 
+// Exportation de la fonction pour utilisation externe
 module.exports = { secureInputValidation };

@@ -1,3 +1,4 @@
+// Importation des modules nécessaires
 const jwt = require("../helper/jwt");
 const db = require("../model/database");
 const dotenv = require("dotenv");
@@ -7,11 +8,20 @@ const hashage = require("../helper/hashage");
 
 dotenv.config();
 
+/**
+ * Création d'une nouvelle session pour un utilisateur.
+ * Cette fonction vérifie les identifiants, génère un token JWT et crée une entrée dans la base de données si la session est valide.
+ *
+ * @param {string} username - Le nom d'utilisateur.
+ * @param {string} password - Le mot de passe de l'utilisateur.
+ * @returns {Promise<string | undefined>} - Le token JWT généré ou `undefined` en cas d'échec.
+ */
 const createSession = async function (username, password) {
-  // Vérification de paramètre de connection et récupération des données manquantes
+  // Vérification des paramètres de connexion et récupération des données manquantes
   const data = await UserController.getData({ username }, null, null, false);
 
   if (!data) {
+    // Rien à faire si utilisateur non trouvé
     return;
   }
 
@@ -21,15 +31,15 @@ const createSession = async function (username, password) {
     return;
   }
 
-  // Infos du token
+  // Informations pour le token
   const dataToken = {
-    sub: data.id,
-    userCreation: data.created_at,
-    admin: data.isAdmin === 1,
-    iat: Math.floor(new Date() / 1000),
-    exp: Math.floor(new Date() / 1000) + 60 * 60,
+    sub: data.id, // ID de l'utilisateur
+    userCreation: data.created_at, // Date de création du compte
+    admin: data.isAdmin === 1, // Flag administrateur
+    iat: Math.floor(new Date() / 1000), // Date d'émission
+    exp: Math.floor(new Date() / 1000) + 60 * 60, // Date d'expiration (1 heure après emission)
   };
-  let sessionCreated = false;
+
   const iatStr = new Date(dataToken.iat * 1000)
     .toISOString()
     .slice(0, 19)
@@ -38,15 +48,18 @@ const createSession = async function (username, password) {
     .toISOString()
     .slice(0, 19)
     .replace("T", " ");
+
+  let sessionCreated = false; // Pour gérer la suppression en cas d'échec
+
   try {
-    // Ajout à la db
+    // Ajout de la session à la base de données
     await db.pool.query(
       `INSERT INTO ${db.tableSession} (fkUser, created_at, expires_at) VALUES (?, ?, ?)`,
       [data.id, iatStr, expStr]
     );
     sessionCreated = true;
 
-    // Récupération de l'id du token créé
+    // Récupération de l'ID du token créé
     const Token = await db.pool.query(
       `SELECT id FROM ${db.tableSession} WHERE fkUser = ? AND created_at = ? AND expires_at = ? ORDER BY created_at DESC LIMIT 1`,
       [data.id, iatStr, expStr]
@@ -57,7 +70,7 @@ const createSession = async function (username, password) {
     }
     const idToken = Token[0][0].id;
 
-    // Génération du token
+    // Génération du token JWT avec le JTI (ID de session)
     dataToken.jti = idToken;
 
     const token = await jwt.createToken(dataToken);
@@ -69,6 +82,7 @@ const createSession = async function (username, password) {
 
     if (sessionCreated) {
       try {
+        // Suppression de la session si elle a été créée
         await db.pool.query(
           `DELETE FROM ${db.tableSession} 
            WHERE fkUser = ? AND created_at = ? AND expires_at = ?`,
@@ -83,9 +97,18 @@ const createSession = async function (username, password) {
   }
 };
 
+/**
+ * Vérifie si un utilisateur est connecté via le token fourni.
+ * Cette fonction vérifie la validité du token JWT et s'il correspond à une session active dans la base de données.
+ *
+ * @param {string} token - Le token JWT à vérifier.
+ * @param {boolean} secure - Flag indiquant si une recherche sécurisée doit être effectuée pour récupérer les données utilisateur.
+ * @returns {Promise<Object>} - Résolution avec les informations utilisateur ou rejet avec une erreur.
+ */
 const isLogin = function (token, secure = true) {
   return new Promise(async (resolve, reject) => {
     if (!token) {
+      // Aucun token fourni, on rejette avec une erreur
       reject("Aucun token");
       return;
     }
@@ -121,28 +144,37 @@ const isLogin = function (token, secure = true) {
           secure
         );
         console.log("User : ", user);
-        resolve({ ...user, tokenId: decoded.jti }); // Retourne l'objet token décodé
+        // On résout avec les informations utilisateur et l'ID du token
+        resolve({ ...user, tokenId: decoded.jti });
         return;
       } else {
         reject("Token non trouvé dans la base de données");
         return;
       }
     } catch (err) {
-      console.error("Erreur dans la verification du token dans la db : " + err);
-      reject("Erreur base de données"); // Retourne undefined en cas d'erreur dans la DB
+      console.error("Erreur dans la vérification du token dans la DB : " + err);
+      // On rejette avec une erreur de base de données
+      reject("Erreur base de données");
       return;
     }
   });
 };
 
+/**
+ * Suppression d'une session.
+ * Cette fonction supprime la session associée à un token JWT.
+ *
+ * @param {string} token - Le token JWT pour lequel supprimer la session.
+ * @returns {Promise<string | undefined>} - Promesse résolue avec un message de succès ou rejetée avec une erreur.
+ */
 const deleteSession = function (token) {
-  // TODO : Fonction permettant de supprimer une session afin de se deconnecter proprement
   return new Promise(async (resolve, reject) => {
-    // Vérification du login
+    // Vérification du login pour obtenir les données utilisateur
     let userData = undefined;
     try {
       userData = await isLogin(token);
 
+      // Suppression de la session depuis la base de données
       const resultQuery = await db.pool.query(
         `DELETE FROM ${db.tableSession} WHERE id=?`,
         [userData.tokenId]
