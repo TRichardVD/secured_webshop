@@ -16,9 +16,27 @@ dotenv.config();
  * @param {string} password - Le mot de passe de l'utilisateur.
  * @returns {Promise<string | undefined>} - Le token JWT généré ou `undefined` en cas d'échec.
  */
-const createSession = async function (username, password) {
+const createSession = async function (
+  username = undefined,
+  password = undefined,
+  userId = undefined,
+  secure = true
+) {
   // Vérification des paramètres de connexion et récupération des données manquantes
-  const data = await UserController.getData({ username }, null, null, false);
+  let data = undefined;
+  if (userId) {
+    data = await UserController.getData({ id: userId }, null, null, false);
+  } else if (username) {
+    data = await UserController.getData(
+      { username: username },
+      null,
+      null,
+      false
+    );
+  } else {
+    console.error("Paramètres de connexion manquants");
+    return;
+  }
 
   if (!data) {
     // Rien à faire si utilisateur non trouvé
@@ -26,7 +44,10 @@ const createSession = async function (username, password) {
   }
 
   // Vérification du mot de passe
-  if (!hashage.compareHash(data.salt, password, data.passwordHashed)) {
+  if (
+    secure &&
+    !hashage.compareHash(data.salt, password, data.passwordHashed)
+  ) {
     console.error("Mot de passe incorrect");
     return;
   }
@@ -76,6 +97,7 @@ const createSession = async function (username, password) {
     const token = await jwt.createToken(dataToken);
 
     console.log("Nouveau token ", token);
+
     return token;
   } catch (err) {
     console.error("Erreur lors de la création de session : ", err);

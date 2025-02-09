@@ -28,6 +28,12 @@ router.get("/", async (req, res) => {
  */
 router.post("/api/create", async (req, res) => {
   const { username, password } = req.body;
+  console.log("Création d'utilisateur : ", username, password);
+  if (!username || !password) {
+    return res
+      .status(400)
+      .send("Paramètres manquants pour la création d'utilisateur");
+  }
 
   let secureUsername = undefined;
   let securePassword = undefined;
@@ -46,7 +52,10 @@ router.post("/api/create", async (req, res) => {
   }
 
   // Création de l'utilisateur avec les données sécurisées
-  UserController.createUser({ secureUsername, securePassword });
+  UserController.createUser({
+    username: secureUsername,
+    password: securePassword,
+  });
 
   // Redirection vers la page de connexion après création
   return res.redirect("/login");
@@ -74,6 +83,12 @@ router.post("/api/login", async function (req, res) {
     return res.status(400).send("Password invalide : " + err);
   }
 
+  // Vérifier les informations d'identification
+  try {
+  } catch (err) {
+    return res.status(400).send("Erreur lors de la connexion : " + err);
+  }
+
   try {
     // Création d'une session si les informations sont valides
     const token = await SessionController.createSession(
@@ -91,6 +106,7 @@ router.post("/api/login", async function (req, res) {
         domain: "localhost",
         encode: String,
         secure: true,
+        httpOnly: true,
       })
       .redirect("/user");
   } catch {
@@ -104,7 +120,10 @@ router.post("/api/login", async function (req, res) {
  */
 router.get("/api/getData", async (req, res) => {
   // Récupération du token (en headers ou en cookies)
-  const token = req.headers.token || req.cookies.token;
+  const token = req.headers.cookie
+    .split(";")
+    .filter((c) => c.includes("token"))[0]
+    .split("=")[1];
 
   if (!token) {
     return res.status(400).json({ message: "No token" });
@@ -120,6 +139,7 @@ router.get("/api/getData", async (req, res) => {
       return res.status(200).json(result);
     }
   } catch (err) {
+    console.log("Erreur " + err);
     return res.status(401).json({ message: "No valid access" });
   }
 });
@@ -128,8 +148,10 @@ router.get("/api/getData", async (req, res) => {
  * Déconnexion. Suppression de la session associée au token.
  */
 router.post("/api/deconnection", async (req, res) => {
-  const token = req.headers.token;
-
+  const token = req.headers.cookie
+    .split(";")
+    .filter((c) => c.includes("token"))[0]
+    .split("=")[1];
   try {
     // Suppression de la session
     const message = await SessionController.deleteSession(token);
@@ -158,7 +180,10 @@ router.get("/:id", async (req, res) => {
 router.get("/api/all", async (req, res) => {
   let users = undefined;
   let userData = undefined;
-  const token = req.headers.token;
+  const token = req.headers.cookie
+    .split(";")
+    .filter((c) => c.includes("token"))[0]
+    .split("=")[1];
   const name = req.query.name;
 
   let secureName = undefined;
@@ -205,7 +230,10 @@ router.get("/api/all", async (req, res) => {
  */
 router.get("/api/:id", async (req, res) => {
   let UserData = undefined;
-  const token = req.headers.token;
+  const token = req.headers.cookie
+    .split(";")
+    .filter((c) => c.includes("token"))[0]
+    .split("=")[1];
   const id = Number(req.params.id);
 
   if (!token) {

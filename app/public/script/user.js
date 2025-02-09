@@ -1,27 +1,6 @@
 // Section des fonctions d'assistance
 
 /**
- * Récupère la valeur d'un cookie par son nom.
- *
- * @param {string} name - Nom du cookie à récupérer.
- * @returns {string|null} - Valeur du cookie si trouvé, null sinon.
- */
-function getCookie(name) {
-  // Ajout d'un "=" pour éviter les confusions avec des noms similaires
-  const cookieName = name + "=";
-  // Découpage de la chaîne de cookies en tableau
-  const cookies = document.cookie.split(";");
-
-  for (let cookie of cookies) {
-    cookie = cookie.trim(); // Suppression des espaces
-    if (cookie.startsWith(cookieName)) {
-      return cookie.substring(cookieName.length);
-    }
-  }
-  return null;
-}
-
-/**
  * Efface un cookie existant.
  *
  * @param {string} name - Nom du cookie à effacer.
@@ -35,15 +14,9 @@ function eraseCookie(name) {
 // Variable pour stocker les informations de l'utilisateur
 let userInformations = undefined;
 
-// Récupération du token depuis les cookies
-const token = getCookie("token");
-
 // Récupération des informations de l'utilisateur via une requête serveur
 fetch("/user/api/getData", {
   method: "GET",
-  headers: {
-    token,
-  },
 })
   .then((response) => response.json())
   .then((response) => {
@@ -71,9 +44,6 @@ document.getElementById("DisconnectButton").addEventListener("click", () => {
   if (confirm("Êtes-vous sûr de vouloir vous déconnecter ?")) {
     fetch("/user/api/deconnection", {
       method: "POST",
-      headers: {
-        token,
-      },
     })
       .then((result) => {
         console.log("Déconnection réussie");

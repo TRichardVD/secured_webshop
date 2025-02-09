@@ -13,6 +13,7 @@ const settings = {
 // Nomenclature des tables
 const tableUser = "t_users"; // Table des utilisateurs
 const tableSession = "t_sessions"; // Table des sessions
+const tableOAuth = "t_oauth_accounts"; // Table des informations OAuth
 
 // Création d'un pool de connexions pour gérer plusieurs requêtes simultanément
 const pool = mysql.createPool(settings);
@@ -42,4 +43,5 @@ module.exports = {
   connection: getConnection,
   tableUser,
   tableSession,
+  tableOAuth,
 };

@@ -7,6 +7,9 @@ const path = require("path");
 const UserController = require("./controllers/UserController");
 const SessionController = require("./controllers/SessionController");
 const cookieParser = require("cookie-parser");
+const dotenv = require("dotenv");
+const helper = require("./helper/helper.js");
+const util = require("util");
 
 // Initialisation de l'application Express
 const app = express();
@@ -58,6 +61,135 @@ app.get("/login", async (req, res) => {
 
   // Redirige vers la page utilisateur ssi l'utilisateur est déjà connecté
   return res.redirect("/user");
+});
+
+/**
+ * Route redirigeant l'utilisateur vers la page de connexion GitHub.
+ */
+app.get("/github-login", (req, res) => {
+  const clientId = process.env.CLIENT_ID; // ID de l'application GitHub
+  const redirectUri = "https://localhost/github-callback"; // URL de callback
+  const scope = "read:user"; // Permissions demandées
+
+  // Génération de l'URL de redirection vers GitHub
+  const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
+    redirectUri
+  )}&scope=${scope}`;
+
+  // Redirection vers GitHub
+  res.redirect(githubAuthUrl);
+});
+
+app.get("/github-callback", async (req, res) => {
+  const code = req.query.code;
+
+  if (!code) {
+    return res.status(400).json({ error: "Code d'autorisation manquant." });
+  }
+
+  try {
+    // Échanger le code contre un token d'accès
+    const tokenResponse = await fetch(
+      "https://github.com/login/oauth/access_token",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json", // Pour demander une réponse JSON
+        },
+        body: JSON.stringify({
+          client_id: process.env.CLIENT_ID,
+          client_secret: process.env.CLIENT_SECRET,
+          code: code,
+          redirect_uri:
+            process.env.REDIRECT_URI || "https://localhost/github-callback",
+        }),
+      }
+    );
+
+    const tokenData = await tokenResponse.json();
+
+    if (tokenData.error) {
+      throw new Error(
+        tokenData.error_description || "Erreur lors de l'échange du token."
+      );
+    }
+
+    const accessToken = tokenData.access_token; // Token d'accès
+    const tokenType = tokenData.token_type;
+
+    // Récupérer les informations utilisateur avec le token d'accès
+    const userResponse = await fetch("https://api.github.com/user", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const userData = await userResponse.json();
+
+    if (!userData || !userData.id || !userData.login) {
+      throw new Error("Les données utilisateur GitHub sont incomplètes.");
+    }
+
+    console.log(
+      "Données utilisateur GitHub : ",
+      util.inspect(userData, false, null)
+    );
+
+    // Récupérer les informations utiles de GitHub
+    const provider = "github";
+    const providerUserId = userData.id; // ID unique de l'utilisateur dans GitHub
+    const username = userData.login; // Nom d'utilisateur GitHub
+    const email = userData.email || null; // Peut être null si privé
+
+    // Vérifier si l'utilisateur OAuth existe déjà
+    const existingOAuthAccount = await db.pool.query(
+      "SELECT fkUser FROM t_oauth_accounts WHERE provider = ? AND provider_user_id = ?",
+      [provider, providerUserId]
+    );
+
+    let userId;
+    if (existingOAuthAccount[0].length > 0) {
+      // L'utilisateur existe déjà
+      userId = existingOAuthAccount[0][0].fkUser;
+    } else {
+      // Créer un nouvel utilisateur
+      const insertUserResult = await db.pool.query(
+        "INSERT INTO t_users (username, email) VALUES (?, ?)",
+        [username, email]
+      );
+      userId = insertUserResult[0].insertId;
+
+      // Créer l'entrée OAuth associée
+      await db.pool.query(
+        "INSERT INTO t_oauth_accounts (fkUser, provider, provider_user_id, provider_email, access_token) VALUES (?, ?, ?, ?, ?)",
+        [userId, provider, providerUserId, email, accessToken]
+      );
+    }
+
+    // Créer une session pour l'utilisateur (token jwt)
+    const token = await SessionController.createSession(
+      undefined,
+      undefined,
+      userId,
+      false
+    );
+
+    // Stocker le token dans un cookie sécurisé
+    res.cookie("token", token, {
+      domain: "localhost",
+      encode: String,
+      secure: true,
+      httpOnly: true,
+    });
+
+    // Rediriger l'utilisateur vers la page d'accueil
+    res.redirect("/user");
+  } catch (error) {
+    console.error("Erreur lors de l'authentification GitHub : ", error.message);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 /**
@@ -117,6 +249,9 @@ app.use((req, res) => {
 // Création et démarrage du serveur HTTPS
 https.createServer(credentials, app).listen(443, () => {
   console.log("Server running on port 443");
+
+  // intialisation de dotenv
+  dotenv.config();
 
   // Établissement de la connexion à la base de données MySQL
   db.connection();

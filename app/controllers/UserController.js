@@ -18,6 +18,11 @@ dotenv.config();
  * @returns {Promise<number | undefined>} - ID de l'utilisateur créé ou `undefined` en cas d'échec.
  */
 const createUser = function ({ username, password }) {
+  if (!username || !password) {
+    console.error("Paramètres manquants pour la création d'utilisateur");
+    return undefined;
+  }
+
   // Génération d'un sel (salt) aléatoire pour le hachage du mot de passe
   const salt = helper.generateSalt(10);
   // Hachage du mot de passe avec le sel

@@ -47,7 +47,22 @@ Depuis le dossier `./app`, installez les dépendances Node.js :
 npm install
 ```
 
-### Étape 5 : Lancer l'application
+### Étape 5 : Confirgurer le `.env`
+
+Pour configurer votre application, veuillez compléter les valeurs dans le modèle du fichier `.env` présent dans [`.env.example`](./app/.env.example) ou ci-dessous, puis placez-le dans le répertoire `/app` sous le nom de fichier `.env`.
+
+```bash
+# Clés secrètes
+PRIVATE_KEY="PRIVATE_KEY"     # Cette clé secrète est utilisée pour signer le cookie de session
+POIVRE="POIVRE"               # Utilisé pour hacher les mots de passe
+
+# Authentification GitHub
+CLIENT_ID="CLIENT_ID"         # ID client obtenu à partir de GitHub
+CLIENT_SECRET="CLIENT_SECRET" # This is the client secret you got from Github
+
+```
+
+### Étape 6 : Lancer l'application
 
 Démarrez le serveur avec :
 
@@ -67,7 +82,8 @@ Accédez ensuite à l'application via [https://localhost/](https://localhost/).
 - [x] Page d'administration
 - [x] Protection contre les injections SQL sans ORM.
 - [x] Documentation complète avec JSDoc.
-- [ ] Authentification via une API tierce (OAuth 2.0, MSAL)
+- [x] Authentification via une API tierce (ici Github) (OAuth 2.0, MSAL)
+- [ ] Modification pour de la page home afin d'utiliser EJS
 - [ ] Ajout sur la page de login l'affichage de message d'erreur ou des messages de succès d'une opération
 - [ ] Hashage avec bcrypt avec salage et poivrage (actuellement uniquement avec `Scrypt`).
 - [ ] Ajout de logs détaillés pour faciliter le débogage.
