@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const UserController = require("../controllers/UserController.js");
 const SessionController = require("../controllers/SessionController.js");
+const secureEntry = require("../helper/secureEntry.js");
 
 const path = require("path");
 
@@ -16,16 +17,49 @@ router.get("/", async (req, res) => {
   return res.sendFile(path.join(__dirname, "../vue/home.html"));
 });
 
-router.post("/api/create", (req, res) => {
+router.post("/api/create", async (req, res) => {
   const { username, password } = req.body;
-  UserController.createUser({ username, password });
+
+  let secureUsername = undefined;
+  let securePassword = undefined;
+
+  try {
+    secureUsername = await secureEntry.secureInputValidation(username);
+  } catch (err) {
+    return res.status(400).send("Username invalide : " + err);
+  }
+  try {
+    securePassword = await secureEntry.secureInputValidation(password);
+  } catch (err) {
+    return res.status(400).send("Password invalide : " + err);
+  }
+
+  UserController.createUser({ secureUsername, securePassword });
   return res.redirect("/login");
 });
 
 router.post("/api/login", async function (req, res) {
   const { username, password } = req.body;
+
+  let secureUsername = undefined;
+  let securePassword = undefined;
+
   try {
-    const token = await SessionController.createSession(username, password);
+    secureUsername = await secureEntry.secureInputValidation(username);
+  } catch (err) {
+    return res.status(400).send("Username invalide : " + err);
+  }
+  try {
+    securePassword = await secureEntry.secureInputValidation(password);
+  } catch (err) {
+    return res.status(400).send("Password invalide : " + err);
+  }
+
+  try {
+    const token = await SessionController.createSession(
+      secureUsername,
+      securePassword
+    );
 
     if (!token) {
       return res.redirect(`/login?username=${username}`);
@@ -90,20 +124,30 @@ router.get("/api/all", async (req, res) => {
   const token = req.headers.token;
   const name = req.query.name;
 
+  let secureName = undefined;
+  if (name) {
+    try {
+      secureName = await secureEntry.secureInputValidation(name);
+    } catch (err) {
+      return res.status(400).send("Nom invalide : " + err);
+    }
+  } else {
+    secureName = "";
+  }
+
   try {
     userData = await SessionController.isLogin(token, false);
     if (userData.isAdmin === 1) {
       users = await UserController.getData(
         null,
         {
-          username: name.length > 0 ? `%${name}%` : "%",
+          username: name.length > 0 ? `%${secureName}%` : "%",
         },
         token
       );
       console.log("Response Users : ", users);
       return res.json({
-        message:
-          "Liste des utilisateurs correspondant à la demande correctement récupérée",
+        message: `Liste des utilisateurs correspondant à la demande correctement récupérée pour la recherche "${secureName}"`,
         data: users,
       });
     } else {
