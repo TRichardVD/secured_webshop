@@ -13,13 +13,18 @@ router.use(express.urlencoded({ extended: true }));
  * Page d'accueil. Vérifie si l'utilisateur est connecté avant d'afficher la page.
  */
 router.get("/", async (req, res) => {
+  let userData = undefined;
   try {
-    await SessionController.isLogin(req.cookies.token);
+    userData = await SessionController.isLogin(req.cookies.token);
+    return res.render("home", {
+      username: userData.username,
+      id: userData.id,
+      isAdmin: userData.isAdmin,
+    });
   } catch {
     // Redirection vers la page de connexion si non connecté
     return res.redirect("/login");
   }
-  return res.sendFile(path.join(__dirname, "../vue/home.html"));
 });
 
 /**
@@ -58,7 +63,7 @@ router.post("/api/create", async (req, res) => {
   });
 
   // Redirection vers la page de connexion après création
-  return res.redirect("/login");
+  return res.redirect("/login?username=" + secureUsername);
 });
 
 /**
@@ -112,35 +117,6 @@ router.post("/api/login", async function (req, res) {
   } catch {
     // Redirection vers la page de connexion si échec de connexion
     return res.redirect(`/login?username=${username}`);
-  }
-});
-
-/**
- * Récupération des données utilisateur. Vérifie le token pour l'authentification.
- */
-router.get("/api/getData", async (req, res) => {
-  // Récupération du token (en headers ou en cookies)
-  const token = req.headers.cookie
-    .split(";")
-    .filter((c) => c.includes("token"))[0]
-    .split("=")[1];
-
-  if (!token) {
-    return res.status(400).json({ message: "No token" });
-  }
-
-  try {
-    // Vérification de la session via le token
-    const result = await SessionController.isLogin(token);
-
-    if (!result) {
-      return res.status(404).json({ message: "No data found" });
-    } else {
-      return res.status(200).json(result);
-    }
-  } catch (err) {
-    console.log("Erreur " + err);
-    return res.status(401).json({ message: "No valid access" });
   }
 });
 

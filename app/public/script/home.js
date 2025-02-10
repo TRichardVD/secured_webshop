@@ -11,32 +11,10 @@ function eraseCookie(name) {
 
 // Section principale
 
-// Variable pour stocker les informations de l'utilisateur
-let userInformations = undefined;
-
-// Récupération des informations de l'utilisateur via une requête serveur
-fetch("/user/api/getData", {
-  method: "GET",
-})
-  .then((response) => response.json())
-  .then((response) => {
-    console.log(response);
-    userInformations = response;
-
-    // Affichage des informations de l'utilisateur
-    document.getElementById("username").textContent = response.username;
-    document.getElementById("container").style = "display: block";
-    document.getElementById("Loading").style = "display: none";
-
-    // Affichage du bouton d'accès administrateur si nécessaire
-    if (response.isAdmin === 1) {
-      document.getElementById("AdminAcessButton").style = "display: block";
-    }
-  })
-  .catch((err) => {
-    alert("Une erreur est survenue");
-    console.error(err);
-  });
+// Afficher le bouton d'administration si l'utilisateur est administrateur
+if (Number(window.user.isAdmin) === 1) {
+  document.getElementById("AdminAcessButton").style.display = "block";
+}
 
 // Gestion de la déconnexion
 
@@ -61,7 +39,7 @@ document.getElementById("DisconnectButton").addEventListener("click", () => {
 
 // Redirection vers la page du profil de l'utilisateur
 document.getElementById("AccessMyProfil").addEventListener("click", () => {
-  window.location.href = `/user/${userInformations.id}`;
+  window.location.href = `/user/${window.user.id}`;
 });
 
 // Redirection vers la page d'administration

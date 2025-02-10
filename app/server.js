@@ -23,6 +23,10 @@ const credentials = {
   cert: fs.readFileSync("./certificats/server.crt"), // Certificat public
 };
 
+// Paramétrage de l'application Express
+app.set("view engine", "ejs"); // Utilisation du moteur de rendu EJS
+app.set("views", path.join(__dirname, "vue")); // Définition du dossier des vues
+
 // Utilisation du middleware pour servir des fichiers statiques depuis le dossier "public"
 app.use(express.static("public"));
 // Utilisation du middleware pour parser les cookies de la requête
@@ -42,7 +46,7 @@ app.get("/", async (req, res) => {
   }
 
   // Envoie la page d'accueil ssi l'utilisateur est connecté
-  return res.sendFile(path.join(__dirname, "vue/home.html"));
+  return res.redirect("/user");
 });
 
 /**

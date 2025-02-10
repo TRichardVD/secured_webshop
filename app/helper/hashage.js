@@ -1,7 +1,5 @@
 // Importation de la fonction scryptSync et timingSafeEqual du module crypto
 const { scryptSync, timingSafeEqual } = require("node:crypto");
-const dotenv = require("dotenv");
-dotenv.config();
 const poivre = process.env.POIVRE;
 
 /**

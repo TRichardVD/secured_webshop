@@ -83,7 +83,7 @@ Accédez ensuite à l'application via [https://localhost/](https://localhost/).
 - [x] Protection contre les injections SQL sans ORM.
 - [x] Documentation complète avec JSDoc.
 - [x] Authentification via une API tierce (ici Github) (OAuth 2.0, MSAL)
-- [ ] Modification pour de la page home afin d'utiliser EJS
+- [x] Modification pour de la page home afin d'utiliser EJS
 - [ ] Ajout sur la page de login l'affichage de message d'erreur ou des messages de succès d'une opération
 - [ ] Hashage avec bcrypt avec salage et poivrage (actuellement uniquement avec `Scrypt`).
 - [ ] Ajout de logs détaillés pour faciliter le débogage.

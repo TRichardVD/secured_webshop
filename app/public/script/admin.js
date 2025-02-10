@@ -53,6 +53,7 @@ function refreshUsers() {
           <tr>
             <td>${user.id}</td>
             <td>${user.username}</td>
+            <td><a href="/user/${user.id}"><img src="/assets/visibility_24dp_8C1AF6_FILL0_wght400_GRAD0_opsz24.svg" alt="" style="width: 20px;"></td>
           </tr>`;
       }
     })
@@ -81,4 +82,9 @@ document.getElementById("search").addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     refreshUsers();
   }
+});
+
+// Gestion du clic sur le bouton de retour à la page d'accueil
+document.getElementById("ReturnToHome").addEventListener("click", () => {
+  window.location.href = "/user";
 });
