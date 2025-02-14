@@ -8,9 +8,9 @@ L'objectif principal est de comprendre et d'implémenter les concepts de sécuri
 
 Avant de démarrer, assurez-vous d'avoir installé :
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) (pour la conteneurisation)
-- [Node.js](https://nodejs.org/) (version LTS recommandée)
-- [Git](https://git-scm.com/) (pour cloner le repository)
+-   [Docker Desktop](https://www.docker.com/products/docker-desktop) (pour la conteneurisation)
+-   [Node.js](https://nodejs.org/) (version LTS recommandée)
+-   [Git](https://git-scm.com/) (pour cloner le repository)
 
 ## Démarrer le projet
 
@@ -74,17 +74,17 @@ Accédez ensuite à l'application via [https://localhost/](https://localhost/).
 
 ## ✅ Checklist des tâches à développé
 
-- [x] Génération et utilisation de certificats HTTPS.
-- [x] Page d'accueil
-- [x] Profil du client
-- [x] Authentification via JWT et compte utilisateur.
-- [x] Gestion des rôles (utilisateur/admin).
-- [x] Page d'administration
-- [x] Protection contre les injections SQL sans ORM.
-- [x] Documentation complète avec JSDoc.
-- [x] Authentification via une API tierce (ici Github) (OAuth 2.0, MSAL)
-- [x] Modification pour de la page home afin d'utiliser EJS
-- [ ] Ajout sur la page de login l'affichage de message d'erreur ou des messages de succès d'une opération
-- [ ] Hashage avec bcrypt avec salage et poivrage (actuellement uniquement avec `Scrypt`).
-- [ ] Ajout de logs détaillés pour faciliter le débogage.
-- [ ] Optimisation et refactorisation des routes backend.
+-   [x] Génération et utilisation de certificats HTTPS.
+-   [x] Page d'accueil
+-   [x] Profil du client
+-   [x] Authentification via JWT et compte utilisateur.
+-   [x] Gestion des rôles (utilisateur/admin).
+-   [x] Page d'administration
+-   [x] Protection contre les injections SQL sans ORM.
+-   [x] Documentation complète avec JSDoc.
+-   [x] Authentification via une API tierce (ici Github) (OAuth 2.0, MSAL)
+-   [x] Modification pour de la page home afin d'utiliser EJS
+-   [ ] Ajout sur la page de login l'affichage de message d'erreur ou des messages de succès d'une opération
+-   [ ] Hashage avec `bcrypt` avec salage et poivrage (actuellement uniquement avec `Scrypt`).
+-   [ ] Ajout de logs détaillés pour faciliter le débogage.
+-   [ ] Optimisation et refactorisation des routes backend.
