@@ -85,7 +85,7 @@ Accédez ensuite à l'application via [https://localhost/](https://localhost/).
 -   [x] Authentification via une API tierce (ici Github) (OAuth 2.0, MSAL)
 -   [x] Modification pour de la page home afin d'utiliser EJS
 -   [x] Bug : Correction d'un bug concernant les pages personnelles des utilisateurs. (Touts id sélectionné renvoie les informations de l'utilisateur connecté et pas de celui seletionné)
--   [ ] Ajout d'un `LIMIT` à l'affichage des proils sur la page admin
+-   [x] Ajout d'un `LIMIT` à l'affichage des proils sur la page admin
 -   [ ] Ajout dans `isLogin` une vérification si la conncetion github est toujours valide
 -   [ ] Ajout sur la page de login l'affichage de message d'erreur ou des messages de succès d'une opération
 -   [ ] Hashage avec `bcrypt` avec salage et poivrage (actuellement uniquement avec `Scrypt`).
