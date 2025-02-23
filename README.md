@@ -6,19 +6,21 @@ L'objectif principal est de comprendre et d'implémenter les concepts de sécuri
 
 ## Prérequis
 
-Avant de démarrer, assurez-vous d'avoir installé :
+Avant de démarrer, assurez-vous d'avoir installé les éléments suivants :
 
 -   [Docker Desktop](https://www.docker.com/products/docker-desktop) (pour la conteneurisation)
 -   [Node.js](https://nodejs.org/) (version LTS recommandée)
--   [Git](https://git-scm.com/) (pour cloner le repository)
+-   [Git](https://git-scm.com/) (pour cloner le référentiel)
 
 ## Démarrer le projet
 
-### Étape 1 : Cloner le repository
+### Étape 1 : Cloner le référentiel
+
+Ouvrez un terminal et exécutez la commande suivante pour cloner le référentiel :
 
 ```bash
-git clone https://github.com/votre-utilisateur/Secured-Webshop.git
-cd Secured-Webshop
+git clone https://github.com/TRichardVD/secured_webshop.git
+cd secured_webshop
 ```
 
 ### Étape 2 : Lancer Docker
@@ -31,7 +33,7 @@ docker-compose up
 
 ### Étape 3 : Générer les certificats HTTPS
 
-Dans le dossier `/app/certificats`, exécutez ces commandes depuis Git Bash :
+Dans le dossier `/app/certificats`, ouvrez un terminal Git Bash et exécutez les commandes suivantes pour générer les certificats HTTPS :
 
 ```bash
 openssl genrsa -out server.key 2048
@@ -39,17 +41,9 @@ openssl req -new -key server.key -out server.csr
 openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 ```
 
-### Étape 4 : Installer les dépendances
+### Étape 4 : Configurer le fichier `.env`
 
-Depuis le dossier `./app`, installez les dépendances Node.js :
-
-```bash
-npm install
-```
-
-### Étape 5 : Confirgurer le `.env`
-
-Pour configurer votre application, veuillez compléter les valeurs dans le modèle du fichier `.env` présent dans [`.env.example`](./app/.env.example) ou ci-dessous, puis placez-le dans le répertoire `/app` sous le nom de fichier `.env`.
+Pour configurer votre application, veuillez compléter les valeurs dans le modèle du fichier `.env` présent dans [`.env.example`](./app/.env.example) ou ci-dessous, puis placez-le dans le répertoire `/app` sous le nom de fichier `.env`. Ce fichier contient des clés secrètes et des informations d'authentification pour votre application.
 
 ```bash
 # Clés secrètes
@@ -58,21 +52,22 @@ POIVRE="POIVRE"               # Utilisé pour hacher les mots de passe
 
 # Authentification GitHub
 CLIENT_ID="CLIENT_ID"         # ID client obtenu à partir de GitHub
-CLIENT_SECRET="CLIENT_SECRET" # This is the client secret you got from Github
+CLIENT_SECRET="CLIENT_SECRET" # Secret client obtenu à partir de GitHub
 
 ```
 
-### Étape 6 : Lancer l'application
+### Étape 5 : Lancer l'application
 
-Démarrez le serveur avec :
+Démarrez le serveur avec la commande suivante :
 
 ```bash
 npm run start
 ```
 
-Accédez ensuite à l'application via [https://localhost/](https://localhost/).
+> Les dépendances sont automatiquement installées en même temps que le lancement du serveur pour éviter les oublis d'installation des dépendances.
+> Accédez ensuite à l'application via [https://localhost/](https://localhost/).
 
-## ✅ Checklist des tâches à développé
+## ✅ Checklist des tâches à développées
 
 -   [x] Génération et utilisation de certificats HTTPS.
 -   [x] Page d'accueil
@@ -85,7 +80,7 @@ Accédez ensuite à l'application via [https://localhost/](https://localhost/).
 -   [x] Authentification via une API tierce (ici Github) (OAuth 2.0, MSAL)
 -   [x] Modification pour de la page home afin d'utiliser EJS
 -   [x] Hashage avec `bcrypt` avec salage et poivrage (actuellement uniquement avec `Scrypt`).
--   [ ] Ajout dans `isLogin` une vérification si la conncetion github est toujours valide
+-   [x] Ajout dans `isLogin` une vérification si la connexion github est toujours valide
 -   [ ] Ajout sur la page de login l'affichage de message d'erreur ou des messages de succès d'une opération
 -   [ ] Ajout de logs détaillés pour faciliter le débogage.
 -   [ ] Optimisation et refactorisation des routes backend.

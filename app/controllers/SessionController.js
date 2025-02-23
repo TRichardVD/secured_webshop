@@ -4,6 +4,7 @@ const db = require('../model/database');
 const dotenv = require('dotenv');
 const UserController = require('./UserController');
 const hashage = require('../helper/hashage');
+const database = require('../model/database');
 
 dotenv.config();
 
@@ -137,7 +138,6 @@ const isLogin = function (token, secure = true) {
         let decoded = undefined;
 
         try {
-            console.log('Dans isLogin TOKEN : ', token);
             decoded = await jwt.verifyToken(token);
         } catch (error) {
             console.error('Erreur de vérification du token : ', error.message);
@@ -152,9 +152,8 @@ const isLogin = function (token, secure = true) {
                 [decoded.jti]
             );
             console.log(result);
+            // Si on trouve une entrée valide
             if (result[0].length === 1) {
-                // Si on trouve une entrée valide
-
                 // Récupération des données de l'utilisateur
                 const user = await UserController.getData(
                     {
@@ -162,9 +161,59 @@ const isLogin = function (token, secure = true) {
                     },
                     null,
                     null,
-                    secure
+                    false
                 );
                 console.log('User : ', user);
+
+                // Si c'est une connection via Github
+                if (!user.passwordHashed || user.passwordHashed.length < 3) {
+                    // Récupération du token de connection via Github
+                    const [oauthData] = await database.pool.query(
+                        `SELECT * FROM ${database.tableOAuth} WHERE fkUser = ?`,
+                        [user.id]
+                    );
+
+                    if (!oauthData || oauthData.length !== 1) {
+                        reject('Erreur données pour la session oauth invalide');
+                        console.error(
+                            `Erreur pour l'utilisateur ${user.id}, ${oauthData.length} session(s) OAUTH ont été trouvée(s)`
+                        );
+                        return;
+                    }
+
+                    try {
+                        console.log('Tentative de requete chez github');
+                        const userResponse = await fetch(
+                            'https://api.github.com/user',
+                            {
+                                method: 'GET',
+                                headers: {
+                                    Authorization: `Bearer ${oauthData[0].access_token}`,
+                                },
+                            }
+                        );
+                        const userGithubData = await userResponse.json();
+
+                        if (!userGithubData.id || userResponse.status !== 200) {
+                            console.error(
+                                'Github à retourner une erreur : ',
+                                userResponse.statusText
+                            );
+                            reject('Github à retourner une erreur');
+                            return;
+                        }
+                        console.log("requete réusiie : l'utilisateur existe");
+                    } catch (err) {
+                        reject(
+                            'Erreur lors de la requete chez Github. Veuillez réessayer plus tard !'
+                        );
+                        console.error(
+                            'Erreur lors de la requete chez github : ',
+                            err
+                        );
+                    }
+                }
+
                 // On résout avec les informations utilisateur et l'ID du token
                 resolve({ ...user, tokenId: decoded.jti });
                 return;

@@ -120,7 +120,6 @@ app.get('/github-callback', async (req, res) => {
         }
 
         const accessToken = tokenData.access_token; // Token d'accès
-        const tokenType = tokenData.token_type;
 
         // Récupérer les informations utilisateur avec le token d'accès
         const userResponse = await fetch('https://api.github.com/user', {
@@ -149,7 +148,7 @@ app.get('/github-callback', async (req, res) => {
 
         // Vérifier si l'utilisateur OAuth existe déjà
         const existingOAuthAccount = await db.pool.query(
-            'SELECT fkUser FROM t_oauth_accounts WHERE provider = ? AND provider_user_id = ?',
+            'SELECT id, fkUser FROM t_oauth_accounts WHERE provider = ? AND provider_user_id = ?',
             [provider, providerUserId]
         );
 
@@ -157,12 +156,21 @@ app.get('/github-callback', async (req, res) => {
         if (existingOAuthAccount[0].length > 0) {
             // L'utilisateur existe déjà
             userId = existingOAuthAccount[0][0].fkUser;
+
+            // Mettre à jour le token d'accès
+            console.log('idididi : ', existingOAuthAccount);
+            const resAHAH = await db.pool.query(
+                `UPDATE ${db.tableOAuth} SET access_token = ? WHERE id = ?`,
+                [accessToken, existingOAuthAccount[0][0].id]
+            );
+            console.log('miam', resAHAH);
         } else {
             // Créer un nouvel utilisateur
             const insertUserResult = await db.pool.query(
                 'INSERT INTO t_users (username, email) VALUES (?, ?)',
                 [username, email]
             );
+
             userId = insertUserResult[0].insertId;
 
             // Créer l'entrée OAuth associée
@@ -276,7 +284,7 @@ https.createServer(credentials, app).listen(443, () => {
         console.error('.env pas correctement complété');
         return;
     } else {
-        console.log("Variables d'environnement correctement initialisé");
+        console.log("Variables d'environnement correctement initialisées");
     }
 
     // Établissement de la connexion à la base de données MySQL
