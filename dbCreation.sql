@@ -7,7 +7,6 @@ CREATE TABLE `t_users` (
   `username` VARCHAR(45) NOT NULL UNIQUE,
   `email` VARCHAR(255) UNIQUE,  -- Ajout email pour OAuth
   `passwordHashed` VARCHAR(255),  -- Nullable car pas nécessaire pour OAuth
-  `salt` VARCHAR(64),            -- Nullable car pas nécessaire pour OAuth
   `isAdmin` BOOLEAN NOT NULL DEFAULT '0',
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   -- `status` ENUM('active', 'inactive', 'banned') DEFAULT 'active',

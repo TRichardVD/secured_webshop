@@ -2,7 +2,6 @@
 const jwt = require('../helper/jwt');
 const db = require('../model/database');
 const dotenv = require('dotenv');
-const helper = require('../helper/helper');
 const hashage = require('../helper/hashage');
 
 dotenv.config();
@@ -10,7 +9,7 @@ dotenv.config();
 /**
  * Création d'un nouvel utilisateur.
  * Cette fonction utilise des informations fournies pour insérer un nouvel utilisateur dans la base de données.
- * Elle génère un sel (salt) aléatoire pour le hachage du mot de passe.
+ * Elle génère un sel aléatoire pour le hachage du mot de passe.
  *
  * @param {Object} params - Informations de l'utilisateur à créer.
  * @param {string} params.username - Nom d'utilisateur.
@@ -23,16 +22,14 @@ const createUser = function ({ username, password }) {
         return undefined;
     }
 
-    // Génération d'un sel (salt) aléatoire pour le hachage du mot de passe
-    const salt = helper.generateSalt(10);
     // Hachage du mot de passe avec le sel
-    const pswHashed = hashage.calculateHash(salt, password);
+    const pswHashed = hashage.calculateHash(10, password);
 
     // Insertion des informations de l'utilisateur dans la base de données
     db.pool
         .query(
-            `INSERT INTO ${db.tableUser} (username, passwordHashed, salt) VALUES (?, ?, ?)`,
-            [username, pswHashed, salt]
+            `INSERT INTO ${db.tableUser} (username, passwordHashed) VALUES (?, ?)`,
+            [username, pswHashed]
         )
         .then((result) => {
             console.log('User created : ', result);
@@ -42,7 +39,7 @@ const createUser = function ({ username, password }) {
         });
 
     // Récupération des données de l'utilisateur tout juste créé
-    const data = getData({ username, passwordHashed: pswHashed, salt });
+    const data = getData({ username, passwordHashed: pswHashed });
     if (!data) {
         console.error('Erreur : Utilisateur créé introuvable');
         return undefined;
@@ -106,7 +103,7 @@ const getData = async function (
 
     // Filtrage des informations sensibles
     const resultFiltered = result.map((element) => {
-        const { passwordHashed, salt, ...rest } = element;
+        const { passwordHashed, ...rest } = element;
         return rest;
     });
 

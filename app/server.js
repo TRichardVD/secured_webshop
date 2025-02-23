@@ -4,11 +4,9 @@ const https = require('https');
 const fs = require('fs');
 const db = require('./model/database');
 const path = require('path');
-const UserController = require('./controllers/UserController');
 const SessionController = require('./controllers/SessionController');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
-const helper = require('./helper/helper.js');
 const util = require('util');
 
 // Initialisation de l'application Express
@@ -265,10 +263,10 @@ https.createServer(credentials, app).listen(443, () => {
     // Vérification du .env
     if (
         !(
-            process.env.PRIVATE_KEY.length > 8 &&
-            process.env.POIVRE.length > 8 &&
-            process.env.CLIENT_ID.length > 8 &&
-            process.env.CLIENT_SECRET.length > 8
+            process.env.PRIVATE_KEY.length >= 8 &&
+            process.env.POIVRE.length >= 8 &&
+            process.env.CLIENT_ID.length >= 8 &&
+            process.env.CLIENT_SECRET.length >= 8
         ) ||
         process.env.PRIVATE_KEY === 'PRIVATE_KEY' ||
         process.env.POIVRE === 'POIVRE' ||
