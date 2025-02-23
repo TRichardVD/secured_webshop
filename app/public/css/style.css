@@ -147,12 +147,11 @@ table th {
 }
 
 table tr {
-    transition: background-color 1s ease;
+    transition: background-color 0.5s ease;
 }
 
 table tr:hover {
-    background-color: var(--secondary-color);
-    color: white;
+    background-color: var(--shadow-color);
 }
 
 table {
