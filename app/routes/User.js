@@ -46,13 +46,21 @@ router.post('/api/create', async (req, res) => {
 
     try {
         // Vérification de sécurité sur le nom d'utilisateur
-        secureUsername = await secureEntry.secureInputValidation(username);
+        secureUsername = await secureEntry.secureInputValidation(
+            username,
+            8,
+            50
+        );
     } catch (err) {
         return res.status(400).send('Username invalide : ' + err);
     }
     try {
         // Vérification de sécurité sur le mot de passe
-        securePassword = await secureEntry.secureInputValidation(password);
+        securePassword = await secureEntry.secureInputValidation(
+            password,
+            8,
+            255
+        );
     } catch (err) {
         return res.status(400).send('Password invalide : ' + err);
     }
@@ -167,7 +175,7 @@ router.get('/api/all', async (req, res) => {
     if (name) {
         try {
             // Vérification de sécurité sur le nom
-            secureName = await secureEntry.secureInputValidation(name);
+            secureName = await secureEntry.secureInputValidation(name, 0, 100);
         } catch (err) {
             return res.status(400).send('Nom invalide : ' + err);
         }
