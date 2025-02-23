@@ -5,7 +5,6 @@ const UserController = require('../controllers/UserController.js');
 const SessionController = require('../controllers/SessionController.js');
 const secureEntry = require('../helper/secureEntry.js');
 const path = require('path');
-const database = require('../model/database.js');
 
 // Middleware pour parser les données POST
 router.use(express.urlencoded({ extended: true }));
