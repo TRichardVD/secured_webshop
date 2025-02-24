@@ -265,26 +265,31 @@ app.use((req, res) => {
 https.createServer(credentials, app).listen(443, () => {
     console.log('Server running on port 443');
 
-    // intialisation de dotenv
-    dotenv.config();
+    try {
+        // intialisation de dotenv
+        dotenv.config();
 
-    // Vérification du .env
-    if (
-        !(
-            process.env.PRIVATE_KEY.length >= 8 &&
-            process.env.POIVRE.length >= 8 &&
-            process.env.CLIENT_ID.length >= 8 &&
-            process.env.CLIENT_SECRET.length >= 8
-        ) ||
-        process.env.PRIVATE_KEY === 'PRIVATE_KEY' ||
-        process.env.POIVRE === 'POIVRE' ||
-        process.env.CLIENT_ID === 'CLIENT_ID' ||
-        process.env.CLIENT_SECRET === 'CLIENT_SECRET'
-    ) {
-        console.error('.env pas correctement complété');
+        // Vérification du .env
+        if (
+            process.env.PRIVATE_KEY === 'PRIVATE_KEY' ||
+            process.env.POIVRE === 'POIVRE' ||
+            process.env.CLIENT_ID === 'CLIENT_ID' ||
+            process.env.CLIENT_SECRET === 'CLIENT_SECRET' ||
+            !(
+                process.env.PRIVATE_KEY.length >= 8 &&
+                process.env.POIVRE.length >= 8 &&
+                process.env.CLIENT_ID.length >= 8 &&
+                process.env.CLIENT_SECRET.length >= 8
+            )
+        ) {
+            console.error('.env pas correctement complété');
+            return;
+        } else {
+            console.log("Variables d'environnement correctement initialisées");
+        }
+    } catch (err) {
+        console.error("Impossible d'accéder au .env", err);
         return;
-    } else {
-        console.log("Variables d'environnement correctement initialisées");
     }
 
     // Établissement de la connexion à la base de données MySQL
