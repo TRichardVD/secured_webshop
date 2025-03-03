@@ -81,6 +81,8 @@ npm run start
 -   [x] Modification pour de la page home afin d'utiliser EJS
 -   [x] Hashage avec `bcrypt` avec salage et poivrage (actuellement uniquement avec `Scrypt`).
 -   [x] Ajout dans `isLogin` une vérification si la connexion github est toujours valide
+-   [ ] Ajout d'un middleware auth pour simplifier la vérification
+-   [ ] Ajout d'un chiffrement sur les token OAuth2.0
 -   [ ] Ajout sur la page de login l'affichage de message d'erreur ou des messages de succès d'une opération
--   [ ] Ajout de logs détaillés pour faciliter le débogage.
+-   [ ] Ajout de logs détaillés pour faciliter le débogage et l'accès à des logs.
 -   [ ] Optimisation et refactorisation des routes backend.
