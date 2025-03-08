@@ -59,6 +59,9 @@ DB_PORT = 6033
 DB_USER = "root"
 DB_PASSWORD = "root"
 DB_NAME = "db_webstore"
+
+# Encryption
+ENCRYPTION_KEY = "ENCRYPT" # This is the key used for encrypting sensitive data
 ```
 
 ### Étape 5 : Lancer l'application
@@ -88,7 +91,7 @@ npm run start
 - [x] Ajout dans `isLogin` une vérification si la connexion github est toujours valide
 - [x] dockerisation de l'application web
 - [x] Ajout d'un middleware auth pour simplifier la vérification
-- [ ] Ajout d'un chiffrement sur les token OAuth2.0
+- [x] Ajout d'un chiffrement sur les token OAuth2.0
 - [ ] Ajout sur la page de login l'affichage de message d'erreur ou des messages de succès d'une opération
 - [ ] Ajout de logs détaillés pour faciliter le débogage et l'accès à des logs.
 - [ ] Optimisation et refactorisation des routes backend.

@@ -178,12 +178,22 @@ const isLogin = function (token, secure = true) {
             return;
           }
 
+          // Déchiffrer access token
+          const crypt = require("../helper/crypt");
+          const decryptedAccessToken = crypt.decrypt(oauthData[0].access_token);
+
+          if (!decryptedAccessToken) {
+            reject("Erreur lors du déchiffrement du token d'accès");
+            console.error("Erreur lors du déchiffrement du token d'accès");
+            return;
+          }
+
           try {
             console.log("Tentative de requete chez github");
             const userResponse = await fetch("https://api.github.com/user", {
               method: "GET",
               headers: {
-                Authorization: `Bearer ${oauthData[0].access_token}`,
+                Authorization: `Bearer ${decryptedAccessToken}`,
               },
             });
             const userGithubData = await userResponse.json();

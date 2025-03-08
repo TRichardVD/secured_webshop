@@ -133,16 +133,19 @@ app.get("/github-callback", async (req, res) => {
       throw new Error("Les données utilisateur GitHub sont incomplètes.");
     }
 
-    console.log(
-      "Données utilisateur GitHub : ",
-      util.inspect(userData, false, null)
-    );
-
     // Récupérer les informations utiles de GitHub
     const provider = "github";
     const providerUserId = userData.id; // ID unique de l'utilisateur dans GitHub
     const username = userData.login; // Nom d'utilisateur GitHub
     const email = userData.email || null; // Peut être null si privé
+
+    // Chiffrer le token d'accès
+    const crypt = require("./helper/crypt");
+    const encryptedAccessToken = crypt.encrypt(accessToken); // Chiffrement du token d'accès
+
+    if (!encryptedAccessToken) {
+      throw new Error("Erreur lors du chiffrement du token d'accès.");
+    }
 
     // Vérifier si l'utilisateur OAuth existe déjà
     const existingOAuthAccount = await db.pool.query(
@@ -156,12 +159,10 @@ app.get("/github-callback", async (req, res) => {
       userId = existingOAuthAccount[0][0].fkUser;
 
       // Mettre à jour le token d'accès
-      console.log("idididi : ", existingOAuthAccount);
-      const resAHAH = await db.pool.query(
+      await db.pool.query(
         `UPDATE ${db.tableOAuth} SET access_token = ? WHERE id = ?`,
-        [accessToken, existingOAuthAccount[0][0].id]
+        [encryptedAccessToken, existingOAuthAccount[0][0].id]
       );
-      console.log("miam", resAHAH);
     } else {
       // Créer un nouvel utilisateur
       const insertUserResult = await db.pool.query(
@@ -174,7 +175,7 @@ app.get("/github-callback", async (req, res) => {
       // Créer l'entrée OAuth associée
       await db.pool.query(
         "INSERT INTO t_oauth_accounts (fkUser, provider, provider_user_id, provider_email, access_token) VALUES (?, ?, ?, ?, ?)",
-        [userId, provider, providerUserId, email, accessToken]
+        [userId, provider, providerUserId, email, encryptedAccessToken]
       );
     }
 
