@@ -1,45 +1,49 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Register ETML</title>
-        <link rel="stylesheet" href="css/style.css" />
-        <link
-            rel="shortcut icon"
-            href="/assets/lock_24dp_634FA2_FILL0_wght400_GRAD0_opsz24.svg"
-            type="image/x-icon"
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register ETML</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="shortcut icon"
+      href="/assets/lock_24dp_634FA2_FILL0_wght400_GRAD0_opsz24.svg"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+    <div class="notif">
+      <p id="notif-content"></p>
+    </div>
+    <div id="container">
+      <h1>REGISTER</h1>
+      <form action="/user/api/create" method="post">
+        <label for="usernameLogin">Username</label>
+        <input
+          type="text"
+          name="username"
+          id="usernameLogin"
+          required
+          maxlength="20"
+          minlength="3"
         />
-    </head>
-    <body>
-        <div id="container">
-            <h1>REGISTER</h1>
-            <form action="/user/api/create" method="post">
-                <label for="usernameLogin">Username</label>
-                <input
-                    type="text"
-                    name="username"
-                    id="usernameLogin"
-                    required
-                    maxlength="20"
-                    minlength="3"
-                />
 
-                <label for="pswLogin">Password</label>
-                <input
-                    type="password"
-                    name="password"
-                    id="pswLogin"
-                    maxlength="35"
-                    minlength="8"
-                    required
-                />
+        <label for="pswLogin">Password</label>
+        <input
+          type="password"
+          name="password"
+          id="pswLogin"
+          maxlength="35"
+          minlength="8"
+          required
+        />
 
-                <button type="submit" class="important">Submit</button>
-            </form>
-            <button type="button" onclick='window.location.href = "/login"'>
-                J'ai déjà un compte
-            </button>
-        </div>
-    </body>
+        <button type="submit" class="important">Submit</button>
+      </form>
+      <button type="button" onclick='window.location.href = "/login"'>
+        J'ai déjà un compte
+      </button>
+    </div>
+    <script src="/script/notification.js"></script>
+  </body>
 </html>

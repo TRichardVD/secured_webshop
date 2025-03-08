@@ -40,13 +40,17 @@ router.post("/api/create", async (req, res) => {
     // Vérification de sécurité sur le nom d'utilisateur
     secureUsername = await secureEntry.secureInputValidation(username, 8, 50);
   } catch (err) {
-    return res.status(400).send("Username invalide : " + err);
+    return res.redirect(
+      `/register?message=${encodeURIComponent("Username invalide : " + err)}`
+    );
   }
   try {
     // Vérification de sécurité sur le mot de passe
     securePassword = await secureEntry.secureInputValidation(password, 8, 255);
   } catch (err) {
-    return res.status(400).send("Password invalide : " + err);
+    return res.redirect(
+      `/register?message=${encodeURIComponent("Password invalide : " + err)}`
+    );
   }
 
   // Création de l'utilisateur avec les données sécurisées
@@ -56,7 +60,11 @@ router.post("/api/create", async (req, res) => {
   });
 
   // Redirection vers la page de connexion après création
-  return res.redirect("/login?username=" + secureUsername);
+  return res.redirect(
+    `/login?username=${secureUsername}&message=${encodeURIComponent(
+      "Compte créé avec succès! Vous pouvez vous connecter."
+    )}`
+  );
 });
 
 /**
@@ -72,19 +80,27 @@ router.post("/api/login", async function (req, res) {
     // Vérification de sécurité sur le nom d'utilisateur
     secureUsername = await secureEntry.secureInputValidation(username);
   } catch (err) {
-    return res.status(400).send("Username invalide : " + err);
+    return res.redirect(
+      `/login?message=${encodeURIComponent("Username invalide : " + err)}`
+    );
   }
   try {
     // Vérification de sécurité sur le mot de passe
     securePassword = await secureEntry.secureInputValidation(password);
   } catch (err) {
-    return res.status(400).send("Password invalide : " + err);
+    return res.redirect(
+      `/login?message=${encodeURIComponent("Password invalide : " + err)}`
+    );
   }
 
   // Vérifier les informations d'identification
   try {
   } catch (err) {
-    return res.status(400).send("Erreur lors de la connexion : " + err);
+    return res.redirect(
+      `/login?message=${encodeURIComponent(
+        "Erreur lors de la connexion : " + err
+      )}`
+    );
   }
 
   try {
@@ -95,7 +111,11 @@ router.post("/api/login", async function (req, res) {
     );
 
     if (!token) {
-      return res.redirect(`/login?username=${username}`);
+      return res.redirect(
+        `/login?username=${username}&message=${encodeURIComponent(
+          "Identifiants incorrects"
+        )}`
+      );
     }
 
     // Enregistrement du token sous forme de cookie
@@ -106,10 +126,14 @@ router.post("/api/login", async function (req, res) {
         secure: true,
         httpOnly: true,
       })
-      .redirect("/user");
+      .redirect("/user?message=Connexion réussie");
   } catch {
     // Redirection vers la page de connexion si échec de connexion
-    return res.redirect(`/login?username=${username}`);
+    return res.redirect(
+      `/login?username=${username}&message=${encodeURIComponent(
+        "Échec de la connexion"
+      )}`
+    );
   }
 });
 
@@ -123,11 +147,11 @@ router.post("/api/deconnection", async (req, res) => {
     .split("=")[1];
   try {
     // Suppression de la session
-    const message = await SessionController.deleteSession(token);
-    res.status(200).json({ message });
+    await SessionController.deleteSession(token);
     console.log("Session supprimée");
+    return res.redirect("/login?message=Vous avez été déconnecté avec succès");
   } catch (err) {
-    res.status(400).json({ message: err });
+    return res.redirect("/user?message=Erreur lors de la déconnexion");
   }
 });
 

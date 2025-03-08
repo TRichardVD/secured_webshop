@@ -1,43 +1,47 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>User Page</title>
-        <link rel="stylesheet" href="../css/style.css" />
-        <link
-            rel="shortcut icon"
-            href="/assets/account_circle_24dp_634FA2_FILL0_wght400_GRAD0_opsz24.svg"
-            type="image/x-icon"
-        />
-    </head>
-    <body>
-        <img
-            src="/assets/tube-spinner.svg"
-            alt="Loading Animation"
-            width="100px"
-            style="position: absolute; left: 50%; top: 50%"
-            id="Loading"
-        />
-        <div id="container" style="display: none">
-            <h1 id="h1Title">User view</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Page</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link
+      rel="shortcut icon"
+      href="/assets/account_circle_24dp_634FA2_FILL0_wght400_GRAD0_opsz24.svg"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+    <img
+      src="/assets/tube-spinner.svg"
+      alt="Loading Animation"
+      width="100px"
+      style="position: absolute; left: 50%; top: 50%"
+      id="Loading"
+    />
+    <div class="notif">
+      <p id="notif-content"></p>
+    </div>
+    <div id="container" style="display: none">
+      <h1 id="h1Title">User view</h1>
 
-            <!-- Display User Information in table -->
-            <table id="userTable">
-                <thead>
-                    <tr>
-                        <th>Propriété</th>
-                        <th>Valeur</th>
-                    </tr>
-                </thead>
-                <tbody id="InformationsUser">
-                    <!-- Display User Information HERE -->
-                </tbody>
-            </table>
-            <button type="button" id="ReturnToHome">
-                Returner à la page d'accueil
-            </button>
-        </div>
-        <script src="../script/userView.js"></script>
-    </body>
+      <!-- Display User Information in table -->
+      <table id="userTable">
+        <thead>
+          <tr>
+            <th>Propriété</th>
+            <th>Valeur</th>
+          </tr>
+        </thead>
+        <tbody id="InformationsUser">
+          <!-- Display User Information HERE -->
+        </tbody>
+      </table>
+      <button type="button" id="ReturnToHome">
+        Returner à la page d'accueil
+      </button>
+    </div>
+    <script src="../script/userView.js"></script>
+    <script src="/script/notification.js"></script>
+  </body>
 </html>

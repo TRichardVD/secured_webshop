@@ -7,7 +7,6 @@ const path = require("path");
 const SessionController = require("./controllers/SessionController");
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
-const util = require("util");
 
 // Initialisation de l'application Express
 const app = express();
@@ -40,7 +39,9 @@ app.get("/", async (req, res) => {
     await SessionController.isLogin(req.cookies.token);
   } catch (err) {
     console.log(err); // Enregistre l'erreur
-    return res.redirect("/login"); // Redirige vers la page de connexion
+    return res.redirect(
+      "/login?message=Veuillez vous connecter pour accéder à cette page"
+    ); // Redirige vers la page de connexion
   }
 
   // Envoie la page d'accueil ssi l'utilisateur est connecté
@@ -86,7 +87,7 @@ app.get("/github-callback", async (req, res) => {
   const code = req.query.code;
 
   if (!code) {
-    return res.status(400).json({ error: "Code d'autorisation manquant." });
+    return res.redirect("/?message=Code d'autorisation manquant");
   }
 
   try {
@@ -196,10 +197,13 @@ app.get("/github-callback", async (req, res) => {
     });
 
     // Rediriger l'utilisateur vers la page d'accueil
-    res.redirect("/user");
+    res.redirect("/user?message=Connexion via GitHub réussie");
   } catch (error) {
     console.error("Erreur lors de l'authentification GitHub : ", error.message);
-    res.status(500).json({ error: error.message });
+    res.redirect(
+      "/login?message=Erreur lors de l'authentification GitHub: " +
+        encodeURIComponent(error.message)
+    );
   }
 });
 
@@ -241,14 +245,16 @@ app.get("/admin", async (req, res) => {
         .sendFile(path.join(__dirname, "./vue/adminDashboard.html"));
     } else {
       // Accès refusé si l'utilisateur n'est pas administrateur
-      res.status(403).send("Access denied");
+      return res.redirect(
+        "/?message=Accès refusé - Vous n'êtes pas administrateur"
+      );
     }
   } catch (err) {
     console.log(err); // Enregistre l'erreur
-    // Renvoie une erreur interne (500) si une erreur se produit
-    return res
-      .status(500)
-      .send("Une erreur est survenue veuillez reessayer plus tard");
+    // Renvoie une erreur et redirige vers login
+    return res.redirect(
+      "/login?message=Veuillez vous connecter pour accéder à cette page"
+    );
   }
 });
 

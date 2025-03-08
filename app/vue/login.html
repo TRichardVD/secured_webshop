@@ -12,6 +12,9 @@
     />
   </head>
   <body>
+    <div class="notif">
+      <p id="notif-content"></p>
+    </div>
     <div id="container">
       <h1>LOGIN</h1>
       <form action="/user/api/login" method="post">
@@ -43,6 +46,7 @@
       </button>
     </div>
   </body>
+  <script src="/script/notification.js"></script>
   <script>
     const urlParams = new URLSearchParams(window.location.search);
 
