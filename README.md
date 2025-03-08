@@ -92,6 +92,7 @@ npm run start
 - [x] dockerisation de l'application web
 - [x] Ajout d'un middleware auth pour simplifier la vérification
 - [x] Ajout d'un chiffrement sur les token OAuth2.0
-- [ ] Ajout sur la page de login l'affichage de message d'erreur ou des messages de succès d'une opération
+- [x] Ajout sur la page de login l'affichage de message d'erreur ou des messages de succès d'une opération
+- [ ] BUG Trouver pourquoi pas toutes les notifications s'affiche
 - [ ] Ajout de logs détaillés pour faciliter le débogage et l'accès à des logs.
 - [ ] Optimisation et refactorisation des routes backend.
