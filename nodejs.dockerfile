@@ -7,5 +7,5 @@ COPY app/package.json .
 RUN npm install
 COPY app/ ./ 
 
-EXPOSE 8080
-CMD ["nodemon", "server.js"]
+EXPOSE 443
+CMD 'npm start'

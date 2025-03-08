@@ -1,13 +1,14 @@
 // Importation du module MySQL avec prise en charge des promesses
 const mysql = require("mysql2/promise");
 
+require("dotenv").config(); // Chargement des variables d'environnement depuis le fichier .env
 // Configuration de la connexion à la base de données
 const settings = {
-  host: "localhost", // Hôte de la base de données
-  port: 6033, // Port utilisé pour la connexion
-  user: "root", // Nom d'utilisateur pour l'accès à la base de données
-  password: "root", // Mot de passe pour l'accès à la base de données
-  database: "db_webstore", // Nom de la base de données à utiliser
+  host: process.env.DB_HOST || "localhost", // Hôte de la base de données
+  port: parseInt(process.env.DB_PORT) || 6033, // Port utilisé pour la connexion
+  user: process.env.DB_USER || "root", // Nom d'utilisateur pour l'accès à la base de données
+  password: process.env.DB_PASSWORD || "root", // Mot de passe pour l'accès à la base de données
+  database: process.env.DB_NAME || "db_webstore", // Nom de la base de données à utiliser
 };
 
 // Nomenclature des tables
