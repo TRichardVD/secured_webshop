@@ -29,75 +29,11 @@ app.use(express.static("public"));
 // Utilisation du middleware pour parser les cookies de la requête
 app.use(cookieParser());
 
-// Middleware d'authentification
-// Requiert l'authentification - redirige vers login si non connecté
-const requireLogin = async (req, res, next) => {
-  const token = req.cookies.token;
-  if (!token) {
-    return res.redirect(
-      "/login?message=Veuillez vous connecter pour accéder à cette page"
-    );
-  }
-
-  try {
-    const userData = await SessionController.isLogin(token);
-    req.userData = userData;
-    next();
-  } catch (err) {
-    console.log(err);
-    return res.redirect(
-      "/login?message=Veuillez vous connecter pour accéder à cette page"
-    );
-  }
-};
-
-// Redirige vers /user si déjà connecté
-const redirectIfLoggedIn = async (req, res, next) => {
-  const token = req.cookies.token;
-  if (!token) {
-    return next();
-  }
-
-  try {
-    const userData = await SessionController.isLogin(token);
-    return res.redirect("/user");
-  } catch (err) {
-    console.log(err);
-    next();
-  }
-};
-
-// Requiert l'authentification ET l'administration
-const requireAdmin = async (req, res, next) => {
-  const token = req.cookies.token;
-  if (!token) {
-    return res.redirect(
-      "/login?message=Veuillez vous connecter pour accéder à cette page"
-    );
-  }
-
-  try {
-    const userData = await SessionController.isLogin(token);
-    if (userData.isAdmin !== 1) {
-      return res.redirect(
-        "/?message=Accès refusé - Vous n'êtes pas administrateur"
-      );
-    }
-    req.userData = userData;
-    next();
-  } catch (err) {
-    console.log(err);
-    return res.redirect(
-      "/login?message=Veuillez vous connecter pour accéder à cette page"
-    );
-  }
-};
-
 /**
  * Gestion de la page d'accueil. Vérifie si l'utilisateur est connecté.
  * Si connecté, affiche la page d'accueil, sinon redirige vers la page de connexion.
  */
-app.get("/", requireLogin, (req, res) => {
+app.get("/", SessionController.requireLogin, (req, res) => {
   // L'utilisateur est connecté, le rediriger vers la page utilisateur
   return res.redirect("/user");
 });
@@ -106,7 +42,7 @@ app.get("/", requireLogin, (req, res) => {
  * Gestion de la page de connexion. Vérifie si l'utilisateur est déjà connecté.
  * Si connecté, redirige vers la page utilisateur, sinon affiche la page de connexion.
  */
-app.get("/login", redirectIfLoggedIn, (req, res) => {
+app.get("/login", SessionController.redirectIfLoggedIn, (req, res) => {
   // L'utilisateur n'est pas connecté, afficher la page de connexion
   return res.sendFile(path.join(__dirname, "./vue/login.html"));
 });
@@ -256,7 +192,7 @@ app.get("/github-callback", async (req, res) => {
  * Gestion de la page d'inscription. Vérifie si l'utilisateur est déjà connecté.
  * Si connecté, redirige vers la page utilisateur, sinon affiche la page d'inscription.
  */
-app.get("/register", redirectIfLoggedIn, (req, res) => {
+app.get("/register", SessionController.redirectIfLoggedIn, (req, res) => {
   // L'utilisateur n'est pas connecté, afficher la page d'inscription
   return res.sendFile(path.join(__dirname, "vue/register.html"));
 });
@@ -268,7 +204,7 @@ app.use("/user", require("./routes/User"));
  * Gestion de la page d'administration. Vérifie si l'utilisateur est connecté et administrateur.
  * Si connecté et administrateur, affiche la page de dashboard d'admin, sinon renvoie une erreur 403.
  */
-app.get("/admin", requireAdmin, (req, res) => {
+app.get("/admin", SessionController.requireAdmin, (req, res) => {
   // L'utilisateur est admin, afficher la page admin
   return res
     .status(200)

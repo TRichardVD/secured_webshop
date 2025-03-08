@@ -254,6 +254,69 @@ const isLoginMiddleware = async function (req, res, next) {
   }
 };
 
+// Requiert l'authentification - redirige vers login si non connecté
+const requireLogin = async (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.redirect(
+      "/login?message=Veuillez vous connecter pour accéder à cette page"
+    );
+  }
+
+  try {
+    const userData = await isLogin(token);
+    req.userData = userData;
+    next();
+  } catch (err) {
+    console.log(err);
+    return res.redirect(
+      "/login?message=Veuillez vous connecter pour accéder à cette page"
+    );
+  }
+};
+
+// Redirige vers /user si déjà connecté
+const redirectIfLoggedIn = async (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const userData = await isLogin(token);
+    return res.redirect("/user");
+  } catch (err) {
+    console.log(err);
+    next();
+  }
+};
+
+// Requiert l'authentification ET l'administration
+const requireAdmin = async (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.redirect(
+      "/login?message=Veuillez vous connecter pour accéder à cette page"
+    );
+  }
+
+  try {
+    const userData = await isLogin(token);
+    if (userData.isAdmin !== 1) {
+      return res.redirect(
+        "/?message=Accès refusé - Vous n'êtes pas administrateur"
+      );
+    }
+    req.userData = userData;
+    next();
+  } catch (err) {
+    console.log(err);
+    return res.redirect(
+      "/login?message=Veuillez vous connecter pour accéder à cette page"
+    );
+  }
+};
+
 /**
  * Suppression d'une session.
  * Cette fonction supprime la session associée à un token JWT.
@@ -284,4 +347,12 @@ const deleteSession = function (token) {
   });
 };
 
-module.exports = { createSession, isLogin, deleteSession, isLoginMiddleware };
+module.exports = {
+  createSession,
+  isLogin,
+  deleteSession,
+  isLoginMiddleware,
+  requireLogin,
+  redirectIfLoggedIn,
+  requireAdmin,
+};
