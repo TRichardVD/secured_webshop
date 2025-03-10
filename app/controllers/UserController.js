@@ -22,6 +22,11 @@ const createUser = async function ({ username, password }) {
         return undefined;
     }
 
+    if (getData({ username })) {
+        console.error("Nom d'utilisateur déjà utilisé");
+        return undefined;
+    }
+
     // Hachage du mot de passe avec le sel
     const pswHashed = hashage.calculateHash(10, password);
 

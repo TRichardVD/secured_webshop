@@ -66,10 +66,18 @@ router.post('/api/create', async (req, res) => {
     }
 
     // Création de l'utilisateur avec les données sécurisées
-    UserController.createUser({
+    const user = await UserController.createUser({
         username: secureUsername,
         password: securePassword,
     });
+
+    if (!user) {
+        return res.redirect(
+            `/register?username=${secureUsername}&message=${encodeURIComponent(
+                "Erreur lors de la création de l'utilisateur. Nom d'utilisateur déjà utilisé."
+            )}`
+        );
+    }
 
     // Redirection vers la page de connexion après création
     return res.redirect(
