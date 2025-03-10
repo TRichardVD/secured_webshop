@@ -8,4 +8,4 @@ RUN npm install
 COPY app/ ./ 
 
 EXPOSE 443
-CMD 'npm start'
+CMD ["npm", "start"]
