@@ -101,16 +101,6 @@ router.post('/api/login', async function (req, res) {
         );
     }
 
-    // Vérifier les informations d'identification
-    try {
-    } catch (err) {
-        return res.redirect(
-            `/login?message=${encodeURIComponent(
-                'Erreur lors de la connexion : ' + err
-            )}`
-        );
-    }
-
     try {
         // Création d'une session si les informations sont valides
         const token = await SessionController.createSession(

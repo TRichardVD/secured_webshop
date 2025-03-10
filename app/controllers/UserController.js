@@ -31,6 +31,10 @@ const createUser = async function ({ username, password }) {
             `INSERT INTO ${db.tableUser} (username, passwordHashed) VALUES (?, ?)`,
             [username, pswHashed]
         );
+        if (result.affectedRows === 0) {
+            console.error("Erreur lors de la création de l'utilisateur");
+            return undefined;
+        }
 
         console.log('User created : ', result);
     } catch (err) {
