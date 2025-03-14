@@ -7,20 +7,20 @@
  * @returns {string|null} - Valeur du cookie si trouvé, null sinon.
  */
 function getCookie(name) {
-  // Ajout d'un "=" pour éviter les confusions avec des noms similaires
-  const cookieName = name + "=";
-  // Découpage de la chaîne de cookies en tableau
-  const cookies = document.cookie.split(";");
+    // Ajout d'un "=" pour éviter les confusions avec des noms similaires
+    const cookieName = name + "=";
+    // Découpage de la chaîne de cookies en tableau
+    const cookies = document.cookie.split(";");
 
-  for (let cookie of cookies) {
-    // Suppression des espaces autour de chaque cookie
-    cookie = cookie.trim();
-    if (cookie.startsWith(cookieName)) {
-      // Retourne la valeur du cookie en supprimant le nom et le "="
-      return cookie.substring(cookieName.length);
+    for (let cookie of cookies) {
+        // Suppression des espaces autour de chaque cookie
+        cookie = cookie.trim();
+        if (cookie.startsWith(cookieName)) {
+            // Retourne la valeur du cookie en supprimant le nom et le "="
+            return cookie.substring(cookieName.length);
+        }
     }
-  }
-  return null;
+    return null;
 }
 
 // Section principale
@@ -30,37 +30,42 @@ function getCookie(name) {
  * Cette fonction envoie une requête GET pour obtenir la liste mise à jour des utilisateurs filtrés par le champ de recherche.
  */
 function refreshUsers() {
-  // Récupération de la valeur du champ de recherche
-  const search = document.getElementById("search").value;
+    // Récupération de la valeur du champ de recherche
+    const search = document.getElementById("search").value;
 
-  // Envoi de la requête de recherche
-  fetch(`/user/api/all?name=${search || ""}`, {
-    method: "GET",
-    headers: {
-      token: getCookie("token"), // Récupération dynamique du token
-    },
-  })
-    .then((response) => response.json())
-    .then((response) => {
-      console.log(response);
-      // Suppression des anciens résultats
-      const results = document.getElementById("users");
-      results.innerHTML = "";
+    // Envoi de la requête de recherche
+    fetch(`/user/api/all?name=${search || ""}`, {
+        method: "GET",
+        headers: {
+            token: getCookie("token"), // Récupération dynamique du token
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            if (!response || !response.data) {
+                alert("Aucun utilisateur trouvé");
+                return;
+            }
 
-      // Création des éléments de la liste
-      for (let user of response.data) {
-        document.getElementById("users").innerHTML += `
+            console.log(response);
+            // Suppression des anciens résultats
+            const results = document.getElementById("users");
+            results.innerHTML = "";
+
+            // Création des éléments de la liste
+            for (let user of response.data) {
+                document.getElementById("users").innerHTML += `
           <tr>
             <td>${user.id}</td>
             <td>${user.username}</td>
             <td><a href="/user/${user.id}"><img src="/assets/visibility_24dp_8C1AF6_FILL0_wght400_GRAD0_opsz24.svg" alt="" style="width: 20px;"></td>
           </tr>`;
-      }
-    })
-    .catch((err) => {
-      alert("Une erreur est survenue");
-      console.error(err);
-    });
+            }
+        })
+        .catch((err) => {
+            alert("Une erreur est survenue");
+            console.error(err);
+        });
 }
 
 // Section principale
@@ -73,18 +78,18 @@ refreshUsers();
 
 // Ajout d'un événement pour le bouton "Rechercher"
 document.getElementById("searchButton").addEventListener("click", () => {
-  refreshUsers();
+    refreshUsers();
 });
 
 // Ajout d'un événement pour les presses de touches
 document.getElementById("search").addEventListener("keydown", (e) => {
-  // Vérification si la touche Entrée a été pressée (code pour appeler la fonction refreshUsers)
-  if (e.key === "Enter") {
-    refreshUsers();
-  }
+    // Vérification si la touche Entrée a été pressée (code pour appeler la fonction refreshUsers)
+    if (e.key === "Enter") {
+        refreshUsers();
+    }
 });
 
 // Gestion du clic sur le bouton de retour à la page d'accueil
 document.getElementById("ReturnToHome").addEventListener("click", () => {
-  window.location.href = "/user";
+    window.location.href = "/user";
 });
