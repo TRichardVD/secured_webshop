@@ -1,8 +1,8 @@
 // Importation des modules nécessaires
-const jwt = require('../helper/jwt');
-const db = require('../model/database');
-const dotenv = require('dotenv');
-const hashage = require('../helper/hashage');
+const jwt = require("../helper/jwt");
+const db = require("../model/database");
+const dotenv = require("dotenv");
+const hashage = require("../helper/hashage");
 
 dotenv.config();
 
@@ -21,8 +21,7 @@ const createUser = async function ({ username, password }) {
         console.error("Paramètres manquants pour la création d'utilisateur");
         return undefined;
     }
-
-    if (getData({ username })) {
+    if (await getData({ username })) {
         console.error("Nom d'utilisateur déjà utilisé");
         return undefined;
     }
@@ -41,9 +40,9 @@ const createUser = async function ({ username, password }) {
             return undefined;
         }
 
-        console.log('User created : ', result);
+        console.log("User created : ", result);
     } catch (err) {
-        console.log('Error creating user: ', err);
+        console.log("Error creating user: ", err);
         return undefined;
     }
 
@@ -52,13 +51,13 @@ const createUser = async function ({ username, password }) {
     try {
         const data = await getData({ username, passwordHashed: pswHashed });
         if (!data) {
-            console.error('Erreur : Utilisateur créé introuvable');
+            console.error("Erreur : Utilisateur créé introuvable");
             return undefined;
         }
         return data.id;
     } catch (err) {
         console.error(
-            'Erreur lors de la récupération des données utilisateur : ',
+            "Erreur lors de la récupération des données utilisateur : ",
             err
         );
         return undefined;
@@ -102,7 +101,7 @@ const getData = async function (
 
     // Construction de la requête SQL complète
     const query = `SELECT * FROM ${db.tableUser} ${
-        whereClause.length > 0 ? 'WHERE ' + whereClause.join(' AND ') : ''
+        whereClause.length > 0 ? "WHERE " + whereClause.join(" AND ") : ""
     } LIMIT 10`;
     console.log(query, values);
 
